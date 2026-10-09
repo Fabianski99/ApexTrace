@@ -1,0 +1,22 @@
+{
+  "circuitId": "shanghai",
+  "name": "Shanghai International Circuit",
+  "country": "China",
+  "lapLengthKm": 5.451,
+  "corners": [
+    { "number": 1, "name": "Turn 1 (Spiral approach)", "type": "fast", "distanceFromSf": 450, "notes": "End of the back straight into the spiral. Overtaking possible." },
+    { "number": 2, "name": "Turn 2", "type": "fast", "distanceFromSf": 650 },
+    { "number": 3, "name": "Turn 3 (Spiral hairpin)", "type": "slow", "distanceFromSf": 850 },
+    { "number": 4, "name": "Turn 4 (Hairpin exit)", "type": "medium", "distanceFromSf": 1100 },
+    { "number": 5, "name": "Turn 5", "type": "fast", "distanceFromSf": 1400 },
+    { "number": 6, "name": "Turn 6 (Back straight entry)", "type": "fast", "distanceFromSf": 1700 },
+    { "number": 7, "name": "Turn 7", "type": "fast", "distanceFromSf": 2100 },
+    { "number": 8, "name": "Turn 8", "type": "fast", "distanceFromSf": 2500 },
+    { "number": 9, "name": "Turn 9", "type": "fast", "distanceFromSf": 2900 },
+    { "number": 10, "name": "Turn 10 (Hairpin)", "type": "hairpin", "distanceFromSf": 3400, "hasDrsZoneAfter": true, "notes": "Tight hairpin. Heavy braking. DRS zone follows onto the main straight." },
+    { "number": 11, "name": "Turn 11", "type": "medium", "distanceFromSf": 3800 },
+    { "number": 12, "name": "Turn 12", "type": "medium", "distanceFromSf": 4100 },
+    { "number": 13, "name": "Turn 13 (Final chicane T1)", "type": "chicane", "distanceFromSf": 4700, "hasDrsZoneAfter": true },
+    { "number": 14, "name": "Turn 14 (Final chicane T2)", "type": "chicane", "distanceFromSf": 4850 }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "circuitId": "interlagos",
+  "name": "Autodromo Jose Carlos Pace",
+  "country": "Brazil",
+  "lapLengthKm": 4.309,
+  "corners": [
+    { "number": 1, "name": "Curva 1 (Senna S)", "type": "medium", "distanceFromSf": 120, "notes": "Entry to the Senna S. Named in honour of Ayrton Senna. Incident hotspot on lap 1." },
+    { "number": 2, "name": "Senna S (T2)", "type": "medium", "distanceFromSf": 280 },
+    { "number": 3, "name": "Curva 3 (Descida do Lago)", "type": "fast", "distanceFromSf": 560, "notes": "Downhill entry — drivers go fast here." },
+    { "number": 4, "name": "Curva do Sol", "type": "medium", "distanceFromSf": 850 },
+    { "number": 5, "name": "Ferradura (Horseshoe)", "type": "slow", "distanceFromSf": 1200, "hasDrsZoneAfter": true, "notes": "Long sweeping turn before the main DRS straight." },
+    { "number": 6, "name": "Laranjinha", "type": "slow", "distanceFromSf": 1650 },
+    { "number": 7, "name": "Pinheirinho", "type": "slow", "distanceFromSf": 2100 },
+    { "number": 8, "name": "Bico de Pato", "type": "medium", "distanceFromSf": 2500 },
+    { "number": 9, "name": "Mergulho", "type": "fast", "distanceFromSf": 2900, "notes": "High-speed downhill right." },
+    { "number": 10, "name": "Junco", "type": "slow", "distanceFromSf": 3200 },
+    { "number": 11, "name": "Subida dos Boxes", "type": "fast", "distanceFromSf": 3600, "hasDrsZoneAfter": true, "notes": "Uphill back straight. DRS zone leading to the Senna S." },
+    { "number": 12, "name": "Arquibancadas (Subida)", "type": "fast", "distanceFromSf": 3900 }
+  ]
+}

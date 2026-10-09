@@ -1,0 +1,28 @@
+{
+  "circuitId": "bahrain",
+  "name": "Bahrain International Circuit",
+  "country": "Bahrain",
+  "lapLengthKm": 5.412,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 370, "notes": "Heavy braking zone from 300+ km/h. Frequent overtaking spot." },
+    { "number": 2, "name": "Turn 2", "type": "medium", "distanceFromSf": 470 },
+    { "number": 3, "name": "Turn 3", "type": "medium", "distanceFromSf": 590 },
+    { "number": 4, "name": "Turn 4", "type": "slow", "distanceFromSf": 930, "hasDrsZoneAfter": true, "notes": "Key overtaking zone with DRS on run to T1." },
+    { "number": 5, "name": "Turn 5", "type": "fast", "distanceFromSf": 1040 },
+    { "number": 6, "name": "Turn 6", "type": "fast", "distanceFromSf": 1140 },
+    { "number": 7, "name": "Turn 7", "type": "fast", "distanceFromSf": 1260 },
+    { "number": 8, "name": "Turn 8", "type": "slow", "distanceFromSf": 1650, "hasDrsZoneAfter": true },
+    { "number": 9, "name": "Turn 9", "type": "medium", "distanceFromSf": 1740 },
+    { "number": 10, "name": "Turn 10", "type": "slow", "distanceFromSf": 2090, "notes": "Tight hairpin-style corner, pit entry." },
+    { "number": 11, "name": "Turn 11", "type": "medium", "distanceFromSf": 2220 },
+    { "number": 12, "name": "Turn 12", "type": "slow", "distanceFromSf": 2520 },
+    { "number": 13, "name": "Turn 13", "type": "medium", "distanceFromSf": 2750 },
+    { "number": 14, "name": "Turn 14", "type": "medium", "distanceFromSf": 2900 },
+    { "number": 15, "name": "Turn 15", "type": "fast", "distanceFromSf": 3580 },
+    { "number": 16, "name": "Turn 16", "type": "medium", "distanceFromSf": 3800 },
+    { "number": 17, "name": "Turn 17", "type": "slow", "distanceFromSf": 4050 },
+    { "number": 18, "name": "Turn 18", "type": "slow", "distanceFromSf": 4200 },
+    { "number": 19, "name": "Turn 19", "type": "slow", "distanceFromSf": 4350 },
+    { "number": 20, "name": "Turn 20", "type": "slow", "distanceFromSf": 4450 }
+  ]
+}

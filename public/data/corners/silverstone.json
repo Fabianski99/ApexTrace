@@ -1,0 +1,25 @@
+{
+  "circuitId": "silverstone",
+  "name": "Silverstone Circuit",
+  "country": "Great Britain",
+  "lapLengthKm": 5.891,
+  "corners": [
+    { "number": 1, "name": "Abbey", "type": "fast", "distanceFromSf": 200, "notes": "High-speed entry after main straight. Used to be flat; now requires slight lift." },
+    { "number": 2, "name": "Farm Curve", "type": "fast", "distanceFromSf": 450 },
+    { "number": 3, "name": "Village", "type": "slow", "distanceFromSf": 750, "notes": "End of the Wellington Straight. Heavy braking zone, overtaking." },
+    { "number": 4, "name": "The Loop", "type": "hairpin", "distanceFromSf": 900, "hasDrsZoneAfter": true, "notes": "Tight hairpin section; DRS zone follows." },
+    { "number": 5, "name": "Aintree", "type": "slow", "distanceFromSf": 1100 },
+    { "number": 6, "name": "Wellington Straight", "type": "fast", "distanceFromSf": 1300 },
+    { "number": 7, "name": "Brooklands", "type": "slow", "distanceFromSf": 1850, "notes": "Named after the historic Brooklands circuit." },
+    { "number": 8, "name": "Luffield", "type": "slow", "distanceFromSf": 2150, "hasDrsZoneAfter": true },
+    { "number": 9, "name": "Woodcote", "type": "medium", "distanceFromSf": 2550 },
+    { "number": 10, "name": "Copse", "type": "fast", "distanceFromSf": 2900, "notes": "High-speed right-hander. Was flat pre-2010. Scene of Hamilton-Verstappen 2021." },
+    { "number": 11, "name": "Maggotts", "type": "fast", "distanceFromSf": 3300, "notes": "High-speed complex. Drivers carry nearly full speed through here." },
+    { "number": 12, "name": "Becketts", "type": "fast", "distanceFromSf": 3500, "notes": "The Maggotts-Becketts-Chapel sequence is considered one of the best in F1." },
+    { "number": 13, "name": "Chapel", "type": "fast", "distanceFromSf": 3700 },
+    { "number": 14, "name": "Hangar Straight chicane", "type": "fast", "distanceFromSf": 4100 },
+    { "number": 15, "name": "Stowe", "type": "medium", "distanceFromSf": 4700, "notes": "Heavy braking zone, overtaking opportunity." },
+    { "number": 16, "name": "Vale", "type": "slow", "distanceFromSf": 5000 },
+    { "number": 17, "name": "Club", "type": "medium", "distanceFromSf": 5400, "hasDrsZoneAfter": true }
+  ]
+}

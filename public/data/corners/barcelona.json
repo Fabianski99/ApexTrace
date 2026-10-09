@@ -1,0 +1,24 @@
+{
+  "circuitId": "barcelona",
+  "name": "Circuit de Barcelona-Catalunya",
+  "country": "Spain",
+  "lapLengthKm": 4.657,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 190, "notes": "Heavy braking zone, overtaking on approach." },
+    { "number": 2, "name": "Turn 2", "type": "medium", "distanceFromSf": 380 },
+    { "number": 3, "name": "Renault (Turn 3)", "type": "medium", "distanceFromSf": 650 },
+    { "number": 4, "name": "Repsol (Turn 4)", "type": "slow", "distanceFromSf": 870 },
+    { "number": 5, "name": "Seat (Turn 5)", "type": "medium", "distanceFromSf": 1080 },
+    { "number": 6, "name": "Turn 6", "type": "medium", "distanceFromSf": 1220 },
+    { "number": 7, "name": "Turn 7 (Würth)", "type": "slow", "distanceFromSf": 1660, "notes": "Campus corner. Long low-speed section." },
+    { "number": 8, "name": "Turn 8 (Campus)", "type": "slow", "distanceFromSf": 1800 },
+    { "number": 9, "name": "Turn 9", "type": "medium", "distanceFromSf": 2100 },
+    { "number": 10, "name": "La Caixa (Turn 10)", "type": "slow", "distanceFromSf": 2380, "hasDrsZoneAfter": true, "notes": "DRS detection point; overtaking on entry." },
+    { "number": 11, "name": "Turn 11 (Banc de Sabadell)", "type": "hairpin", "distanceFromSf": 2620, "notes": "Tight hairpin. DRS zone follows." },
+    { "number": 12, "name": "Turn 12", "type": "medium", "distanceFromSf": 3100 },
+    { "number": 13, "name": "Turn 13 (Europcar)", "type": "fast", "distanceFromSf": 3450 },
+    { "number": 14, "name": "Turn 14", "type": "fast", "distanceFromSf": 3700 },
+    { "number": 15, "name": "Turn 15 (New Chicane)", "type": "chicane", "distanceFromSf": 4200, "notes": "Added chicane replacing the old final corner section." },
+    { "number": 16, "name": "Turn 16", "type": "medium", "distanceFromSf": 4450 }
+  ]
+}

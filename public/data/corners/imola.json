@@ -1,0 +1,18 @@
+{
+  "circuitId": "imola",
+  "name": "Autodromo Enzo e Dino Ferrari",
+  "country": "Italy",
+  "lapLengthKm": 4.909,
+  "corners": [
+    { "number": 1, "name": "Tamburello", "type": "fast", "distanceFromSf": 200, "notes": "Historic chicane site. Was a flat-out corner before the 1994 modifications. Now a chicane." },
+    { "number": 2, "name": "Tamburello Chicane", "type": "chicane", "distanceFromSf": 300 },
+    { "number": 3, "name": "Villeneuve", "type": "slow", "distanceFromSf": 750, "notes": "Named after Gilles Villeneuve. Tight right-hander, overtaking possible." },
+    { "number": 4, "name": "Tosa", "type": "hairpin", "distanceFromSf": 1100, "notes": "Sharp hairpin, popular overtaking spot." },
+    { "number": 5, "name": "Piratella", "type": "fast", "distanceFromSf": 1600, "notes": "High-speed blind uphill crest. Challenging." },
+    { "number": 6, "name": "Acque Minerali", "type": "chicane", "distanceFromSf": 2100, "notes": "Right-left chicane with a bump at entry." },
+    { "number": 7, "name": "Variante Alta", "type": "chicane", "distanceFromSf": 2800 },
+    { "number": 8, "name": "Rivazza 1", "type": "slow", "distanceFromSf": 3600, "notes": "Double-apex Rivazza complex. Overtaking possible under braking." },
+    { "number": 9, "name": "Rivazza 2", "type": "slow", "distanceFromSf": 3750 },
+    { "number": 10, "name": "Variante Bassa", "type": "chicane", "distanceFromSf": 4600, "hasDrsZoneAfter": true, "notes": "Final chicane before S/F straight. Banked exit." }
+  ]
+}

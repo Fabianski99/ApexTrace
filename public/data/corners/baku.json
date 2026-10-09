@@ -1,0 +1,27 @@
+{
+  "circuitId": "baku",
+  "name": "Baku City Circuit",
+  "country": "Azerbaijan",
+  "lapLengthKm": 6.003,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 200, "notes": "Approach from 340+ km/h on the main straight. DRS overtaking zone." },
+    { "number": 2, "name": "Turn 2", "type": "medium", "distanceFromSf": 400 },
+    { "number": 3, "name": "Turn 3", "type": "slow", "distanceFromSf": 650 },
+    { "number": 4, "name": "Turn 4", "type": "medium", "distanceFromSf": 850 },
+    { "number": 5, "name": "Turn 5", "type": "medium", "distanceFromSf": 1100 },
+    { "number": 6, "name": "Turn 6", "type": "slow", "distanceFromSf": 1350 },
+    { "number": 7, "name": "Turn 7", "type": "slow", "distanceFromSf": 1600 },
+    { "number": 8, "name": "Castle Section", "type": "slow", "distanceFromSf": 1900, "notes": "Narrow uphill section past the Old City walls. Only 7.6m wide at Turn 8." },
+    { "number": 9, "name": "Turn 9", "type": "medium", "distanceFromSf": 2200 },
+    { "number": 10, "name": "Turn 10 (Ateshgah)", "type": "fast", "distanceFromSf": 2600 },
+    { "number": 11, "name": "Turn 11", "type": "fast", "distanceFromSf": 2900 },
+    { "number": 12, "name": "Turn 12", "type": "fast", "distanceFromSf": 3100 },
+    { "number": 13, "name": "Turn 13", "type": "fast", "distanceFromSf": 3400 },
+    { "number": 14, "name": "Turn 14 (Bilasuvar)", "type": "medium", "distanceFromSf": 3700 },
+    { "number": 15, "name": "Turn 15", "type": "medium", "distanceFromSf": 4000 },
+    { "number": 16, "name": "Turn 16 (Pit Straight chicane)", "type": "slow", "distanceFromSf": 5350, "hasDrsZoneAfter": true, "notes": "Final hairpin before the 2.2km straight. Primary DRS overtake zone." },
+    { "number": 17, "name": "Turn 17", "type": "slow", "distanceFromSf": 5500 },
+    { "number": 18, "name": "Turn 18 (Final)", "type": "hairpin", "distanceFromSf": 5700, "hasDrsZoneAfter": true }
+  ],
+  "_accuracy": "corner names approximate — contribute corrections at github.com/racehooks/corner-map"
+}

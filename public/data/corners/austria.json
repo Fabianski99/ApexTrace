@@ -1,0 +1,19 @@
+{
+  "circuitId": "austria",
+  "name": "Red Bull Ring",
+  "country": "Austria",
+  "lapLengthKm": 4.318,
+  "corners": [
+    { "number": 1, "name": "Turn 1 (Castrol)", "type": "slow", "distanceFromSf": 110, "hasDrsZoneAfter": false, "notes": "Heavy braking after S/F straight. Incident hotspot on lap 1." },
+    { "number": 2, "name": "Turn 2 (Remus)", "type": "medium", "distanceFromSf": 400 },
+    { "number": 3, "name": "Turn 3 (Schlossgold)", "type": "fast", "distanceFromSf": 700, "notes": "Fast sweeping right over the crest uphill." },
+    { "number": 4, "name": "Turn 4 (Würth)", "type": "medium", "distanceFromSf": 1000 },
+    { "number": 5, "name": "Turn 5 (A1)", "type": "hairpin", "distanceFromSf": 1450, "hasDrsZoneAfter": true, "notes": "Tight hairpin, overtaking under braking. DRS zone follows." },
+    { "number": 6, "name": "Turn 6", "type": "medium", "distanceFromSf": 1800 },
+    { "number": 7, "name": "Turn 7 (Rauch)", "type": "slow", "distanceFromSf": 2400, "notes": "Long hairpin. Heavy tyre wear section." },
+    { "number": 8, "name": "Turn 8", "type": "slow", "distanceFromSf": 2700 },
+    { "number": 9, "name": "Turn 9 (Rindt)", "type": "hairpin", "distanceFromSf": 3250, "hasDrsZoneAfter": true, "notes": "Tight hairpin named after Jochen Rindt. DRS activation on approach to T1." },
+    { "number": 10, "name": "Turn 10 (Jochen Rindt)", "type": "medium", "distanceFromSf": 3700 }
+  ],
+  "_accuracy": "corner names approximate — contribute corrections at github.com/racehooks/corner-map"
+}

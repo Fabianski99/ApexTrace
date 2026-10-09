@@ -1,0 +1,25 @@
+{
+  "circuitId": "abu-dhabi",
+  "name": "Yas Marina Circuit",
+  "country": "UAE",
+  "lapLengthKm": 5.281,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 250, "hasDrsZoneAfter": false, "notes": "First braking zone after S/F. Overtaking possible." },
+    { "number": 2, "name": "Turn 2", "type": "slow", "distanceFromSf": 400 },
+    { "number": 3, "name": "Turn 3 (Marina Hairpin)", "type": "hairpin", "distanceFromSf": 700, "hasDrsZoneAfter": true, "notes": "Tight hairpin near the marina. DRS opens toward T5." },
+    { "number": 4, "name": "Turn 4", "type": "medium", "distanceFromSf": 1050 },
+    { "number": 5, "name": "Turn 5", "type": "slow", "distanceFromSf": 1350 },
+    { "number": 6, "name": "Turn 6", "type": "medium", "distanceFromSf": 1600 },
+    { "number": 7, "name": "Turn 7", "type": "fast", "distanceFromSf": 1900 },
+    { "number": 8, "name": "Turn 8", "type": "fast", "distanceFromSf": 2200 },
+    { "number": 9, "name": "Turn 9 (Hotel section)", "type": "fast", "distanceFromSf": 2550, "notes": "Passes through the iconic Yas Viceroy Hotel structure." },
+    { "number": 10, "name": "Turn 10", "type": "fast", "distanceFromSf": 2750 },
+    { "number": 11, "name": "Turn 11 (Yas Marina Waterfront)", "type": "slow", "distanceFromSf": 3100 },
+    { "number": 12, "name": "Turn 12", "type": "slow", "distanceFromSf": 3350 },
+    { "number": 13, "name": "Turn 13", "type": "medium", "distanceFromSf": 3600 },
+    { "number": 14, "name": "Turn 14 (Hairpin)", "type": "hairpin", "distanceFromSf": 3900, "hasDrsZoneAfter": true, "notes": "Slow hairpin. DRS detection after." },
+    { "number": 15, "name": "Turn 15", "type": "fast", "distanceFromSf": 4300 },
+    { "number": 16, "name": "Turn 16 (Final complex T1)", "type": "slow", "distanceFromSf": 4900 },
+    { "number": 17, "name": "Turn 17 (Final complex T2)", "type": "slow", "distanceFromSf": 5050, "hasDrsZoneAfter": true, "notes": "Final corner. DRS zone on the long back straight." }
+  ]
+}

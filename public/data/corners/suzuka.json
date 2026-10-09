@@ -1,0 +1,20 @@
+{
+  "circuitId": "suzuka",
+  "name": "Suzuka International Racing Course",
+  "country": "Japan",
+  "lapLengthKm": 5.807,
+  "corners": [
+    { "number": 1, "name": "Turn 1 (First Curve)", "type": "medium", "distanceFromSf": 200, "notes": "Entry to the S-curves. Can be taken at higher speed." },
+    { "number": 2, "name": "S-Curves (S1)", "type": "fast", "distanceFromSf": 390, "notes": "The iconic S-curves. High-speed sequence requiring rhythm." },
+    { "number": 3, "name": "S-Curves (S2)", "type": "fast", "distanceFromSf": 550 },
+    { "number": 4, "name": "Dunlop (S3)", "type": "medium", "distanceFromSf": 700 },
+    { "number": 5, "name": "Degner 1", "type": "medium", "distanceFromSf": 1100, "notes": "Named after Ernst Degner. Entry over a blind crest." },
+    { "number": 6, "name": "Degner 2", "type": "medium", "distanceFromSf": 1250 },
+    { "number": 7, "name": "Hairpin", "type": "hairpin", "distanceFromSf": 1500, "hasDrsZoneAfter": true, "notes": "Tight hairpin. Very slow. Main overtaking point under DRS." },
+    { "number": 8, "name": "Spoon Curve (Turn 1)", "type": "medium", "distanceFromSf": 2650 },
+    { "number": 9, "name": "Spoon Curve (Turn 2)", "type": "slow", "distanceFromSf": 2900, "notes": "The Spoon curve — long right-hander. Heavy tyre load." },
+    { "number": 10, "name": "130R", "type": "fast", "distanceFromSf": 4300, "notes": "Named for its 130m radius. Was one of the scariest corners; now faster with modern aero." },
+    { "number": 11, "name": "Casio Chicane (T1)", "type": "chicane", "distanceFromSf": 5000, "hasDrsZoneAfter": true, "notes": "Final chicane before the start/finish. Drivers cut kerbs aggressively." },
+    { "number": 12, "name": "Casio Chicane (T2)", "type": "chicane", "distanceFromSf": 5150 }
+  ]
+}

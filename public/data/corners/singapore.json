@@ -1,0 +1,32 @@
+{
+  "circuitId": "singapore",
+  "name": "Marina Bay Street Circuit",
+  "country": "Singapore",
+  "lapLengthKm": 4.940,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 200, "notes": "Right-angle right-hander after S/F." },
+    { "number": 2, "name": "Turn 2", "type": "slow", "distanceFromSf": 350 },
+    { "number": 3, "name": "Turn 3", "type": "medium", "distanceFromSf": 530 },
+    { "number": 4, "name": "Turn 4", "type": "medium", "distanceFromSf": 700 },
+    { "number": 5, "name": "Turn 5 (Anderson Bridge)", "type": "medium", "distanceFromSf": 950 },
+    { "number": 6, "name": "Turn 6 (Raffles Boulevard)", "type": "slow", "distanceFromSf": 1200 },
+    { "number": 7, "name": "Turn 7", "type": "slow", "distanceFromSf": 1400 },
+    { "number": 8, "name": "Turn 8", "type": "medium", "distanceFromSf": 1600 },
+    { "number": 9, "name": "Turn 9", "type": "slow", "distanceFromSf": 1750 },
+    { "number": 10, "name": "Turn 10 (Esplanade Bridge)", "type": "fast", "distanceFromSf": 2050, "hasDrsZoneAfter": true, "notes": "Approach over Esplanade Bridge — fastest section of the circuit." },
+    { "number": 11, "name": "Turn 11", "type": "fast", "distanceFromSf": 2300 },
+    { "number": 12, "name": "Turn 12", "type": "slow", "distanceFromSf": 2550 },
+    { "number": 13, "name": "Turn 13", "type": "slow", "distanceFromSf": 2750 },
+    { "number": 14, "name": "Turn 14", "type": "slow", "distanceFromSf": 2950 },
+    { "number": 15, "name": "Turn 15", "type": "slow", "distanceFromSf": 3150 },
+    { "number": 16, "name": "Turn 16 (Singapore Sling)", "type": "chicane", "distanceFromSf": 3350, "notes": "Originally a complex chicane; simplified in 2013." },
+    { "number": 17, "name": "Turn 17", "type": "medium", "distanceFromSf": 3600 },
+    { "number": 18, "name": "Turn 18 (Stamford Road)", "type": "slow", "distanceFromSf": 3850 },
+    { "number": 19, "name": "Turn 19", "type": "slow", "distanceFromSf": 4050 },
+    { "number": 20, "name": "Turn 20", "type": "medium", "distanceFromSf": 4250 },
+    { "number": 21, "name": "Turn 21", "type": "hairpin", "distanceFromSf": 4500, "hasDrsZoneAfter": true },
+    { "number": 22, "name": "Turn 22", "type": "medium", "distanceFromSf": 4700 },
+    { "number": 23, "name": "Turn 23", "type": "slow", "distanceFromSf": 4850 }
+  ],
+  "_accuracy": "corner names approximate — contribute corrections at github.com/racehooks/corner-map"
+}

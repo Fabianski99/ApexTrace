@@ -1,0 +1,28 @@
+{
+  "circuitId": "austin",
+  "name": "Circuit of the Americas",
+  "country": "United States",
+  "lapLengthKm": 5.513,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 350, "notes": "Uphill left-hander. Incident hotspot on lap 1. Drivers arrive blind at the crest." },
+    { "number": 2, "name": "Turn 2", "type": "fast", "distanceFromSf": 620 },
+    { "number": 3, "name": "Turn 3", "type": "fast", "distanceFromSf": 780 },
+    { "number": 4, "name": "Turn 4", "type": "fast", "distanceFromSf": 930 },
+    { "number": 5, "name": "Turn 5", "type": "slow", "distanceFromSf": 1100 },
+    { "number": 6, "name": "Turn 6", "type": "fast", "distanceFromSf": 1350 },
+    { "number": 7, "name": "Turn 7", "type": "fast", "distanceFromSf": 1550 },
+    { "number": 8, "name": "Turn 8", "type": "fast", "distanceFromSf": 1700 },
+    { "number": 9, "name": "Turn 9 (Hairpin)", "type": "hairpin", "distanceFromSf": 1900, "hasDrsZoneAfter": true, "notes": "Tight hairpin, overtaking possible." },
+    { "number": 10, "name": "Turn 10", "type": "slow", "distanceFromSf": 2500 },
+    { "number": 11, "name": "Turn 11", "type": "fast", "distanceFromSf": 2700 },
+    { "number": 12, "name": "Turn 12", "type": "fast", "distanceFromSf": 2900 },
+    { "number": 13, "name": "Turn 13", "type": "fast", "distanceFromSf": 3050 },
+    { "number": 14, "name": "Turn 14", "type": "slow", "distanceFromSf": 3300 },
+    { "number": 15, "name": "Turn 15", "type": "slow", "distanceFromSf": 3500, "hasDrsZoneAfter": true },
+    { "number": 16, "name": "Turn 16", "type": "slow", "distanceFromSf": 3800 },
+    { "number": 17, "name": "Turn 17", "type": "slow", "distanceFromSf": 4000 },
+    { "number": 18, "name": "Turn 18", "type": "medium", "distanceFromSf": 4350 },
+    { "number": 19, "name": "Turn 19", "type": "medium", "distanceFromSf": 4600 },
+    { "number": 20, "name": "Turn 20 (Final)", "type": "slow", "distanceFromSf": 5100, "hasDrsZoneAfter": true, "notes": "Final corner before main straight. DRS activation zone." }
+  ]
+}

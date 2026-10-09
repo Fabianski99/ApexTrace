@@ -1,0 +1,22 @@
+{
+  "circuitId": "budapest",
+  "name": "Hungaroring",
+  "country": "Hungary",
+  "lapLengthKm": 4.381,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 210, "notes": "Braking zone after S/F straight. Rare overtaking at Monaco of non-street circuits." },
+    { "number": 2, "name": "Turn 2", "type": "medium", "distanceFromSf": 380 },
+    { "number": 3, "name": "Turn 3", "type": "fast", "distanceFromSf": 620 },
+    { "number": 4, "name": "Turn 4", "type": "slow", "distanceFromSf": 900 },
+    { "number": 5, "name": "Turn 5", "type": "medium", "distanceFromSf": 1050 },
+    { "number": 6, "name": "Turn 6 (Hairpin)", "type": "hairpin", "distanceFromSf": 1250, "hasDrsZoneAfter": true, "notes": "Tight hairpin, main overtaking point." },
+    { "number": 7, "name": "Turn 7", "type": "fast", "distanceFromSf": 1650 },
+    { "number": 8, "name": "Turn 8", "type": "fast", "distanceFromSf": 1850 },
+    { "number": 9, "name": "Turn 9", "type": "medium", "distanceFromSf": 2100 },
+    { "number": 10, "name": "Turn 10", "type": "medium", "distanceFromSf": 2350 },
+    { "number": 11, "name": "Turn 11", "type": "slow", "distanceFromSf": 2700 },
+    { "number": 12, "name": "Turn 12 (Chicane)", "type": "chicane", "distanceFromSf": 3000 },
+    { "number": 13, "name": "Turn 13", "type": "medium", "distanceFromSf": 3400 },
+    { "number": 14, "name": "Turn 14", "type": "slow", "distanceFromSf": 3700, "hasDrsZoneAfter": true }
+  ]
+}

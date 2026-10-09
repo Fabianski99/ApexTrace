@@ -1,0 +1,22 @@
+{
+  "circuitId": "montreal",
+  "name": "Circuit Gilles Villeneuve",
+  "country": "Canada",
+  "lapLengthKm": 4.361,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 270, "notes": "Heavy braking after long S/F straight. Overtaking possible." },
+    { "number": 2, "name": "Turn 2", "type": "medium", "distanceFromSf": 380 },
+    { "number": 3, "name": "Turn 3", "type": "slow", "distanceFromSf": 570 },
+    { "number": 4, "name": "Turn 4", "type": "fast", "distanceFromSf": 840 },
+    { "number": 5, "name": "Turn 5", "type": "fast", "distanceFromSf": 1000 },
+    { "number": 6, "name": "L'Epingle (Hairpin)", "type": "hairpin", "distanceFromSf": 1350, "hasDrsZoneAfter": true, "notes": "Iconic Montreal hairpin. Named after a pin bend. Overtaking possible." },
+    { "number": 7, "name": "Turn 7", "type": "fast", "distanceFromSf": 1700 },
+    { "number": 8, "name": "Turn 8", "type": "fast", "distanceFromSf": 1900 },
+    { "number": 9, "name": "Turn 9", "type": "medium", "distanceFromSf": 2250 },
+    { "number": 10, "name": "Turn 10", "type": "slow", "distanceFromSf": 2550 },
+    { "number": 11, "name": "Turn 11", "type": "medium", "distanceFromSf": 2700 },
+    { "number": 12, "name": "Turn 12", "type": "slow", "distanceFromSf": 3000 },
+    { "number": 13, "name": "Turn 13 (Wall of Champions)", "type": "chicane", "distanceFromSf": 3600, "hasDrsZoneAfter": true, "notes": "The infamous Wall of Champions chicane. High-speed entry requires precision." },
+    { "number": 14, "name": "Turn 14", "type": "medium", "distanceFromSf": 3800 }
+  ]
+}

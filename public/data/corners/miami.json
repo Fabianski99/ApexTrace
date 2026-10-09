@@ -1,0 +1,26 @@
+{
+  "circuitId": "miami",
+  "name": "Miami International Autodrome",
+  "country": "United States",
+  "lapLengthKm": 5.412,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 320, "notes": "First braking zone. Incident-prone on lap 1." },
+    { "number": 2, "name": "Turn 2", "type": "slow", "distanceFromSf": 470 },
+    { "number": 3, "name": "Turn 3 (High Speed 90)", "type": "fast", "distanceFromSf": 700 },
+    { "number": 4, "name": "Turn 4", "type": "fast", "distanceFromSf": 950 },
+    { "number": 5, "name": "Turn 5", "type": "fast", "distanceFromSf": 1200 },
+    { "number": 6, "name": "Turn 6", "type": "medium", "distanceFromSf": 1500 },
+    { "number": 7, "name": "Turn 7", "type": "slow", "distanceFromSf": 1800, "hasDrsZoneAfter": true, "notes": "DRS zone after T7." },
+    { "number": 8, "name": "Turn 8", "type": "medium", "distanceFromSf": 2100 },
+    { "number": 9, "name": "Turn 9", "type": "medium", "distanceFromSf": 2400 },
+    { "number": 10, "name": "Turn 10 (Marina Hairpin)", "type": "hairpin", "distanceFromSf": 2700, "hasDrsZoneAfter": true, "notes": "Tight hairpin near the fake marina. DRS detection point." },
+    { "number": 11, "name": "Turn 11", "type": "medium", "distanceFromSf": 3000 },
+    { "number": 12, "name": "Turn 12", "type": "medium", "distanceFromSf": 3300 },
+    { "number": 13, "name": "Turn 13", "type": "slow", "distanceFromSf": 3600 },
+    { "number": 14, "name": "Turn 14", "type": "slow", "distanceFromSf": 3900 },
+    { "number": 15, "name": "Turn 15", "type": "medium", "distanceFromSf": 4200 },
+    { "number": 16, "name": "Turn 16 (Stadium section)", "type": "slow", "distanceFromSf": 4600 },
+    { "number": 17, "name": "Turn 17", "type": "slow", "distanceFromSf": 4900 }
+  ],
+  "_accuracy": "corner names approximate — contribute corrections at github.com/racehooks/corner-map"
+}

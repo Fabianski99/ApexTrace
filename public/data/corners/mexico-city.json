@@ -1,0 +1,24 @@
+{
+  "circuitId": "mexico-city",
+  "name": "Autodromo Hermanos Rodriguez",
+  "country": "Mexico",
+  "lapLengthKm": 4.304,
+  "corners": [
+    { "number": 1, "name": "Turn 1 (Peraltada approach)", "type": "slow", "distanceFromSf": 650, "hasDrsZoneAfter": false, "notes": "End of the Peraltada (final) corner, entry to infield." },
+    { "number": 2, "name": "Turn 2", "type": "slow", "distanceFromSf": 800 },
+    { "number": 3, "name": "Turn 3", "type": "medium", "distanceFromSf": 1000 },
+    { "number": 4, "name": "Turn 4 (Horquilla)", "type": "hairpin", "distanceFromSf": 1400, "hasDrsZoneAfter": true, "notes": "Tight hairpin. Main DRS overtaking zone follows." },
+    { "number": 5, "name": "Turn 5", "type": "medium", "distanceFromSf": 1800 },
+    { "number": 6, "name": "Turn 6", "type": "medium", "distanceFromSf": 2050 },
+    { "number": 7, "name": "Turn 7", "type": "medium", "distanceFromSf": 2300 },
+    { "number": 8, "name": "Turn 8 (Esses)", "type": "fast", "distanceFromSf": 2600, "notes": "Quick esses section." },
+    { "number": 9, "name": "Turn 9", "type": "fast", "distanceFromSf": 2800 },
+    { "number": 10, "name": "Turn 10", "type": "fast", "distanceFromSf": 3000 },
+    { "number": 11, "name": "Turn 11", "type": "slow", "distanceFromSf": 3250 },
+    { "number": 12, "name": "Turn 12", "type": "slow", "distanceFromSf": 3450 },
+    { "number": 13, "name": "Turn 13 (Foro Sol Stadium)", "type": "medium", "distanceFromSf": 3700, "notes": "Runs through the baseball Foro Sol stadium. Iconic." },
+    { "number": 14, "name": "Turn 14 (Foro Sol exit)", "type": "slow", "distanceFromSf": 3900 },
+    { "number": 15, "name": "Peraltada (Turn 15)", "type": "fast", "distanceFromSf": 4100, "hasDrsZoneAfter": true, "notes": "Iconic banked final corner. Was previously a full banked oval section. Now a chicane exits to S/F." },
+    { "number": 16, "name": "Peraltada exit", "type": "fast", "distanceFromSf": 4200 }
+  ]
+}

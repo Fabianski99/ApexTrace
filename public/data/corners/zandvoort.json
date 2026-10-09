@@ -1,0 +1,20 @@
+{
+  "circuitId": "zandvoort",
+  "name": "Circuit Zandvoort",
+  "country": "Netherlands",
+  "lapLengthKm": 4.259,
+  "corners": [
+    { "number": 1, "name": "Tarzanbocht (Tarzan)", "type": "hairpin", "distanceFromSf": 90, "notes": "Iconic tight hairpin at the end of the main straight. Only realistic overtaking spot." },
+    { "number": 2, "name": "Gerlachbocht", "type": "fast", "distanceFromSf": 400 },
+    { "number": 3, "name": "Hugenholtz Bocht", "type": "medium", "distanceFromSf": 700 },
+    { "number": 4, "name": "Hunserug", "type": "fast", "distanceFromSf": 1050 },
+    { "number": 5, "name": "Scheivlak", "type": "fast", "distanceFromSf": 1600, "notes": "Blind high-speed corner on the sea-side of the circuit." },
+    { "number": 6, "name": "Bos Uit", "type": "medium", "distanceFromSf": 2100 },
+    { "number": 7, "name": "Slotbocht", "type": "fast", "distanceFromSf": 2600 },
+    { "number": 8, "name": "Arie Luyendijkbocht", "type": "fast", "distanceFromSf": 2900, "notes": "The banked Turn 3; 18° banking. Drivers can take the outer line." },
+    { "number": 9, "name": "Rob Slotemaker S", "type": "medium", "distanceFromSf": 3300 },
+    { "number": 10, "name": "Vodafone Bocht", "type": "slow", "distanceFromSf": 3600 },
+    { "number": 11, "name": "Audi S", "type": "medium", "distanceFromSf": 3750 },
+    { "number": 12, "name": "Hans Ernst Bocht (banked)", "type": "fast", "distanceFromSf": 4050, "hasDrsZoneAfter": true, "notes": "Banked final corner (19°) leading onto main straight." }
+  ]
+}

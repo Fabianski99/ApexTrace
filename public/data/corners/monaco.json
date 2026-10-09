@@ -1,0 +1,23 @@
+{
+  "circuitId": "monaco",
+  "name": "Circuit de Monaco",
+  "country": "Monaco",
+  "lapLengthKm": 3.337,
+  "corners": [
+    { "number": 1, "name": "Sainte Devote", "type": "slow", "distanceFromSf": 155, "notes": "First braking zone. Incident hotspot on lap 1." },
+    { "number": 2, "name": "Beau Rivage", "type": "fast", "distanceFromSf": 300 },
+    { "number": 3, "name": "Massenet", "type": "medium", "distanceFromSf": 500 },
+    { "number": 4, "name": "Casino", "type": "slow", "distanceFromSf": 620, "notes": "Tight left, drivers often lock up here." },
+    { "number": 5, "name": "Mirabeau Haute", "type": "slow", "distanceFromSf": 780 },
+    { "number": 6, "name": "Mirabeau Bas", "type": "slow", "distanceFromSf": 860 },
+    { "number": 7, "name": "Grand Hotel Hairpin", "type": "hairpin", "distanceFromSf": 1060, "notes": "Tightest corner in F1. 45 km/h minimum speed." },
+    { "number": 8, "name": "Portier", "type": "medium", "distanceFromSf": 1200 },
+    { "number": 9, "name": "Tunnel", "type": "fast", "distanceFromSf": 1400, "notes": "Only covered section of any F1 circuit." },
+    { "number": 10, "name": "Nouvelle Chicane", "type": "chicane", "distanceFromSf": 1600, "hasDrsZoneAfter": true },
+    { "number": 11, "name": "Tabac", "type": "medium", "distanceFromSf": 1720 },
+    { "number": 12, "name": "Piscine 1", "type": "chicane", "distanceFromSf": 1850 },
+    { "number": 13, "name": "Piscine 2", "type": "chicane", "distanceFromSf": 1920 },
+    { "number": 14, "name": "La Rascasse", "type": "hairpin", "distanceFromSf": 2080, "notes": "Strategic overtaking point via safety car restart." },
+    { "number": 15, "name": "Antony Noghes", "type": "slow", "distanceFromSf": 2200 }
+  ]
+}

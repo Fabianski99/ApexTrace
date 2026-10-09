@@ -1,0 +1,23 @@
+{
+  "circuitId": "las-vegas",
+  "name": "Las Vegas Street Circuit",
+  "country": "United States",
+  "lapLengthKm": 6.201,
+  "corners": [
+    { "number": 1, "name": "Turn 1 (Koval)", "type": "slow", "distanceFromSf": 2750, "notes": "Heavy braking zone off the Las Vegas Strip section." },
+    { "number": 2, "name": "Turn 2", "type": "slow", "distanceFromSf": 2950 },
+    { "number": 3, "name": "Turn 3", "type": "medium", "distanceFromSf": 3200 },
+    { "number": 4, "name": "Turn 4 (Harmon)", "type": "slow", "distanceFromSf": 3450 },
+    { "number": 5, "name": "Turn 5", "type": "slow", "distanceFromSf": 3650 },
+    { "number": 6, "name": "Turn 6", "type": "slow", "distanceFromSf": 3900 },
+    { "number": 7, "name": "Turn 7 (Sands Ave)", "type": "medium", "distanceFromSf": 4200 },
+    { "number": 8, "name": "Turn 8", "type": "slow", "distanceFromSf": 4500 },
+    { "number": 9, "name": "Turn 9", "type": "slow", "distanceFromSf": 4750 },
+    { "number": 10, "name": "Turn 10 (Flamingo)", "type": "hairpin", "distanceFromSf": 5100, "hasDrsZoneAfter": true, "notes": "Tight hairpin near Flamingo Road. DRS zone follows." },
+    { "number": 11, "name": "Turn 11", "type": "medium", "distanceFromSf": 5500 },
+    { "number": 12, "name": "Turn 12 (Caesar's Palace)", "type": "slow", "distanceFromSf": 5850 },
+    { "number": 13, "name": "Turn 13", "type": "slow", "distanceFromSf": 6000 },
+    { "number": 14, "name": "Turn 14", "type": "medium", "distanceFromSf": 6150, "hasDrsZoneAfter": true }
+  ],
+  "_accuracy": "corner names approximate — contribute corrections at github.com/racehooks/corner-map"
+}

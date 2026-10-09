@@ -1,0 +1,24 @@
+{
+  "circuitId": "melbourne",
+  "name": "Albert Park Circuit",
+  "country": "Australia",
+  "lapLengthKm": 5.278,
+  "corners": [
+    { "number": 1, "name": "Turn 1", "type": "slow", "distanceFromSf": 180, "notes": "Heavy braking from high speed. Incident hotspot on lap 1." },
+    { "number": 2, "name": "Turn 2", "type": "medium", "distanceFromSf": 320 },
+    { "number": 3, "name": "Turn 3", "type": "fast", "distanceFromSf": 630, "notes": "Fast sweeping left; one of the quickest corners on the calendar." },
+    { "number": 4, "name": "Turn 4", "type": "fast", "distanceFromSf": 800 },
+    { "number": 5, "name": "Turn 5", "type": "medium", "distanceFromSf": 1100 },
+    { "number": 6, "name": "Turn 6", "type": "slow", "distanceFromSf": 1300, "hasDrsZoneAfter": true },
+    { "number": 7, "name": "Turn 7", "type": "medium", "distanceFromSf": 1560 },
+    { "number": 8, "name": "Turn 8", "type": "medium", "distanceFromSf": 1750 },
+    { "number": 9, "name": "Turn 9", "type": "medium", "distanceFromSf": 2100 },
+    { "number": 10, "name": "Turn 10", "type": "slow", "distanceFromSf": 2350, "hasDrsZoneAfter": true },
+    { "number": 11, "name": "Turn 11", "type": "fast", "distanceFromSf": 2650 },
+    { "number": 12, "name": "Turn 12", "type": "medium", "distanceFromSf": 3100 },
+    { "number": 13, "name": "Turn 13", "type": "medium", "distanceFromSf": 3350 },
+    { "number": 14, "name": "Turn 14", "type": "slow", "distanceFromSf": 3600, "notes": "Tight hairpin near the lake." },
+    { "number": 15, "name": "Turn 15", "type": "fast", "distanceFromSf": 3800 },
+    { "number": 16, "name": "Turn 16", "type": "fast", "distanceFromSf": 4100 }
+  ]
+}

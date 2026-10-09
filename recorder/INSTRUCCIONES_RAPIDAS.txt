@@ -1,0 +1,13 @@
+APEXTRACE RECORDER — F1 25
+
+1) Instala Python 3.10 o superior (si no lo tienes).
+2) Doble clic en Iniciar_Recorder.bat y deja esa ventana abierta.
+3) F1 25 > Settings > Telemetry Settings:
+   UDP On | Broadcast Off | IP 127.0.0.1 | Port 20777 | Format 2025 | 20 o 60Hz
+4) Entra en Time Trial, cruza meta y completa al menos dos vueltas.
+5) Los JSON aparecen en la carpeta laps (creada automaticamente).
+6) En React, abre la pagina F1 25 Recorder para sincronizar e ir al comparador.
+
+IMPORTANTE: para este prototipo selecciona formato 2025, no 2026 Season Pack.
+No cierres el .bat mientras estes corriendo. No es necesario dejar React abierto.
+Consulta LEEME_INSTALACION.md para todas las instrucciones.

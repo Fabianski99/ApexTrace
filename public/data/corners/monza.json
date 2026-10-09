@@ -1,0 +1,15 @@
+{
+  "circuitId": "monza",
+  "name": "Autodromo Nazionale Monza",
+  "country": "Italy",
+  "lapLengthKm": 5.793,
+  "corners": [
+    { "number": 1, "name": "Prima Variante", "type": "chicane", "distanceFromSf": 350, "notes": "First chicane. Heavy braking from 340 km/h. Incident zone on lap 1." },
+    { "number": 2, "name": "Prima Variante exit", "type": "chicane", "distanceFromSf": 470 },
+    { "number": 3, "name": "Seconda Variante", "type": "chicane", "distanceFromSf": 1050, "hasDrsZoneAfter": true, "notes": "Second chicane. DRS opens on approach to Lesmo." },
+    { "number": 4, "name": "Prima Variante di Lesmo", "type": "medium", "distanceFromSf": 1590 },
+    { "number": 5, "name": "Seconda Variante di Lesmo", "type": "medium", "distanceFromSf": 1740, "notes": "The Lesmo complex. Taken in 5th gear at ~180 km/h." },
+    { "number": 6, "name": "Variante Ascari", "type": "chicane", "distanceFromSf": 3560, "notes": "Named after Alberto Ascari. The fastest chicane in F1; cut kerbs heavily used." },
+    { "number": 7, "name": "Curva Parabolica (Alboreto)", "type": "slow", "distanceFromSf": 4850, "hasDrsZoneAfter": true, "notes": "Final corner. Long-radius sweep. Full power before mid-point. Renamed Alboreto." }
+  ]
+}

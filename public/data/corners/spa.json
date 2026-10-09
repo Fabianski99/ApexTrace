@@ -1,0 +1,23 @@
+{
+  "circuitId": "spa",
+  "name": "Circuit de Spa-Francorchamps",
+  "country": "Belgium",
+  "lapLengthKm": 7.004,
+  "corners": [
+    { "number": 1, "name": "La Source", "type": "hairpin", "distanceFromSf": 120, "hasDrsZoneAfter": true, "notes": "Tight hairpin after S/F. Massive overtaking hotspot on lap 1. DRS detection here; activation down Kemmel Straight." },
+    { "number": 2, "name": "Eau Rouge", "type": "fast", "distanceFromSf": 490, "notes": "One of the most famous corners in motorsport. Blind left compression at the bottom of the hill." },
+    { "number": 3, "name": "Raidillon", "type": "fast", "distanceFromSf": 620, "notes": "The uphill right following Eau Rouge. Taken flat in modern F1." },
+    { "number": 4, "name": "Kemmel Straight chicane (Les Combes)", "type": "chicane", "distanceFromSf": 1900, "notes": "End of the Kemmel Straight. DRS detection." },
+    { "number": 5, "name": "Les Combes T1", "type": "slow", "distanceFromSf": 2000, "hasDrsZoneAfter": false, "notes": "Braking zone at top of the hill." },
+    { "number": 6, "name": "Les Combes T2", "type": "medium", "distanceFromSf": 2100 },
+    { "number": 7, "name": "Malmedy", "type": "fast", "distanceFromSf": 2350 },
+    { "number": 8, "name": "Rivage", "type": "hairpin", "distanceFromSf": 2680, "notes": "Tight hairpin, slow section before the Pouhon." },
+    { "number": 9, "name": "Pouhon", "type": "fast", "distanceFromSf": 3060, "notes": "Double-apex high-speed left. One of the most demanding corners." },
+    { "number": 10, "name": "Fagnes", "type": "medium", "distanceFromSf": 3600 },
+    { "number": 11, "name": "Campus", "type": "slow", "distanceFromSf": 3750 },
+    { "number": 12, "name": "Stavelot", "type": "medium", "distanceFromSf": 4150, "hasDrsZoneAfter": true },
+    { "number": 13, "name": "Blanchimont", "type": "fast", "distanceFromSf": 5600, "notes": "Flat-out high-speed left sweep. Very fast in modern F1." },
+    { "number": 14, "name": "Bus Stop Chicane T1", "type": "chicane", "distanceFromSf": 6700, "notes": "Final chicane before start/finish. Heavy braking from 290+ km/h." },
+    { "number": 15, "name": "Bus Stop Chicane T2", "type": "chicane", "distanceFromSf": 6800, "hasDrsZoneAfter": true }
+  ]
+}
