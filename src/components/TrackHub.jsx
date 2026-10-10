@@ -2,7 +2,8 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronRight, Clock3, Flag, Gauge, MapPinned, Search, Target, WifiOff, Play, Pause, RotateCcw, Timer } from 'lucide-react';
 import TrackMap from './TrackMap';
 import { CIRCUITS, circuitId, loadCircuitAtlas, getCircuit } from '../utils/circuits';
-import { prepareTrack } from '../utils/trackGeometry';
+import { prepareTrack, alignLapToTrack } from '../utils/trackGeometry';
+import { readTurnPlacements, writeTurnPlacement, removeTurnPlacement, mappedTurnPct, exportTurnPlacements } from '../utils/turnPlacement';
 import { shortDate, timeLabel } from '../utils/analysis';
 import { detectBrakingEvents, compareTurnSamples } from '../utils/cornerAnalysis';
 import AdvancedCornerAnalysis from './AdvancedCornerAnalysis';
@@ -41,7 +42,7 @@ const TurnList = memo(function TurnList({turns,chosen,onSelect,statsByTurn}){
       const stats=statsByTurn.get(t.number),active=t.number===chosen;
       return <button key={t.number} className={`hub-turn-row ${active?'active':''}`} onClick={()=>onSelect(t)} role="listitem">
         <span className="hub-turn-number">{t.label}</span>
-        <span className="hub-turn-row-copy"><b>{t.name||`Curva ${t.number}`}</b><small>{t.pct!=null?`≈ ${t.pct.toFixed(1)}% de vuelta · ${t.origin==='apextrace'?'estimación local':'dato comunitario'}`:'Ubicación sin documentar'}</small></span>
+        <span className="hub-turn-row-copy"><b>{t.name||`Curva ${t.number}`}</b><small>{t.origin==='user'?`Ubicación manual ${t.pct!=null?`· ≈ ${t.pct.toFixed(1)}%`:'· requiere vuelta calibrada'}`:t.pct!=null?`≈ ${t.pct.toFixed(1)}% · ${t.origin==='apextrace'?'estimación local':'dato comunitario'}`:t.mapPosition?'Ubicada en el mapa · sin % calibrado':'Ubicación pendiente'}</small></span>
         {stats&&<span className="hub-turn-speed">{stats.minSpeed}<small>km/h mín.</small></span>}
         <ChevronRight size={15}/>
       </button>;
@@ -77,6 +78,7 @@ export default function TrackHub({laps,onCompare}){
   const [filter,setFilter]=useState(''),[region,setRegion]=useState('Todos'),[activeId,setActiveId]=useState(''),[lapId,setLapId]=useState(''),[turnNumber,setTurnNumber]=useState(1),[tab,setTab]=useState('curves'),[referenceId,setReferenceId]=useState('');
   const [atlas,setAtlas]=useState(null),[mapError,setMapError]=useState(false);
   const [annotations,setAnnotations]=useState(null),[annotationsPending,setAnnotationsPending]=useState(false);
+  const [manualTurns,setManualTurns]=useState({}),[placingTurn,setPlacingTurn]=useState(null);
   useEffect(()=>{let live=true;loadCircuitAtlas().then(value=>{if(live)setAtlas(value);}).catch(()=>{if(live)setMapError(true);});return()=>{live=false;};},[]);
   const previews=useMemo(()=>atlas?Object.fromEntries(CIRCUITS.map(c=>[c.id,prepareTrack(atlas[c.id])])):{},[atlas]);
   const lapsByTrack=useMemo(()=>{
@@ -93,13 +95,24 @@ export default function TrackHub({laps,onCompare}){
   const circuitLaps=useMemo(()=>active?[...(lapsByTrack.get(circuitId(active.id))||[])].sort(lapOrder):[],[active,lapsByTrack]);
   const lap=useMemo(()=>lapId==='__none__'?null:circuitLaps.find(l=>l.id===lapId)||bestLap(circuitLaps)||circuitLaps[0]||null,[circuitLaps,lapId]);
   const { percent:pct, playing, rate, setRate, seek:setPct, playPause, reset:resetPlayback, stop:stopPlayback }=useLapPlayback(lap);
+  useEffect(()=>{setManualTurns(readTurnPlacements(activeId));setPlacingTurn(null);},[activeId]);
   useEffect(()=>{
     if(!activeId){setAnnotations(null);return;}
     let mounted=true;setAnnotations(null);setAnnotationsPending(true);
     loadTurnAnnotations(activeId).then(value=>{if(mounted)setAnnotations(value);}).finally(()=>{if(mounted)setAnnotationsPending(false);});
     return()=>{mounted=false;};
   },[activeId]);
-  const turns=useMemo(()=>active?numberedTurns(active.id,annotations):[],[active,annotations]);
+  const shape=active?previews[active.id]:null;
+  const alignment=useMemo(()=>alignLapToTrack(shape,lap),[shape,lap]);
+  const turns=useMemo(()=>{
+    if(!active)return [];
+    return numberedTurns(active.id,annotations).map(t=>{
+      const location=manualTurns[t.number]||t.mapPosition;
+      if(!location)return t;
+      // Only derive telemetry pct when actual X/Z aligns to this circuit.
+      return {...t,origin:manualTurns[t.number]?'user':t.origin,mapPosition:location,pct:mappedTurnPct(shape,lap,location,alignment)};
+    });
+  },[active,annotations,manualTurns,shape,lap,alignment]);
   const selectedTurn=turns.find(t=>t.number===turnNumber)||turns[0];
   // v0.7: detect events from the brake channel, independently of speed minima.
   const brakingEvents=useMemo(()=>lap?detectBrakingEvents(lap):[],[lap]);
@@ -113,6 +126,21 @@ export default function TrackHub({laps,onCompare}){
   const focusedMarkers=useMemo(()=>markersForTurn(lap,focusedCorner),[lap,focusedCorner]);
   const heatSections=useMemo(()=>lap&&reference?buildDeltaSections(lap,reference):EMPTY_ARRAY,[lap,reference]);
   const historyStats={total:laps.length,visited:[...lapsByTrack.keys()].filter(k=>CIRCUITS.some(c=>circuitId(c.id)===k)).length};
+  const placeTurn=useCallback((number,location)=>{
+    if(!active)return;
+    setManualTurns(writeTurnPlacement(active.id,number,location));
+    setPlacingTurn(null);setTurnNumber(number);
+  },[active]);
+  const exportCorrections=()=>{
+    if(!active)return;
+    const content=exportTurnPlacements(active.id),blob=new Blob([content],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const anchor=document.createElement('a');
+    anchor.href=url;anchor.download=active.id.toLowerCase().replace(/\s+/g,'-')+'.json';
+    anchor.click();setTimeout(()=>URL.revokeObjectURL(url),500);
+  };
+  const clearTurn=useCallback(number=>{
+    if(active)setManualTurns(removeTurnPlacement(active.id,number));
+  },[active]);
   const openTrack=id=>{setActiveId(id);setTab('curves');setLapId('');setReferenceId('');resetPlayback();setTurnNumber(1);window.scrollTo({top:0,behavior:'smooth'});};
   const pickTurn=useCallback(turn=>{stopPlayback();setTurnNumber(turn.number);if(Number.isFinite(turn.pct))setPct(turn.pct);},[stopPlayback,setPct]);
   const handleMapTurn=useCallback(number=>{stopPlayback();setTurnNumber(number);const turn=turns.find(t=>t.number===number);if(Number.isFinite(turn?.pct))setPct(turn.pct);},[turns,stopPlayback,setPct]);
@@ -127,10 +155,10 @@ export default function TrackHub({laps,onCompare}){
       {!results.length&&<div className="hub-empty-message">No hay circuitos que coincidan con la búsqueda.</div>}
     </>:<>
       <div className="hub-detail-heading"><button className="hub-back" onClick={reset}><ArrowLeft size={16}/> Todos los circuitos</button><div className="hub-detail-title"><span className="hub-detail-flag" aria-hidden="true">{guideFor(active.id).flag}</span><div><span className="trace-overline">TRACK HUB / {active.grandPrix.toUpperCase()}</span><h1>{active.id}<span className="trace-dot">.</span></h1><p>{active.name} · {guideFor(active.id).type}</p></div></div></div>
-      <div className="hub-stat-row"><div><small>CURVAS NUMERADAS</small><strong>{guideFor(active.id).count}</strong></div><div><small>MEJOR VUELTA VÁLIDA</small><strong>{bestLap(circuitLaps)?timeLabel(bestLap(circuitLaps).time):'—'}</strong></div><div><small>VUELTAS ARCHIVADAS</small><strong>{circuitLaps.length}</strong></div><div><small>UBICACIONES DOCUMENTADAS</small><strong>{turns.filter(t=>Number.isFinite(t.pct)).length}/{turns.length}</strong></div></div>
+      <div className="hub-stat-row"><div><small>CURVAS NUMERADAS</small><strong>{guideFor(active.id).count}</strong></div><div><small>MEJOR VUELTA VÁLIDA</small><strong>{bestLap(circuitLaps)?timeLabel(bestLap(circuitLaps).time):'—'}</strong></div><div><small>VUELTAS ARCHIVADAS</small><strong>{circuitLaps.length}</strong></div><div><small>UBICACIONES DOCUMENTADAS</small><strong>{turns.filter(t=>Number.isFinite(t.pct)||t.mapPosition).length}/{turns.length}</strong></div></div>
       <div className="hub-detail-layout"><div className="hub-map-column">
         <div className="hub-lap-picker"><label><Gauge size={16}/> <span>Vuelta en el mapa</span><select aria-label="Vuelta seleccionada" value={lap?.id||'__none__'} onChange={e=>{stopPlayback();setLapId(e.target.value);setReferenceId('');setPct(0);}}><option value="__none__">Solo circuito</option>{circuitLaps.map(l=><option key={l.id} value={l.id}>{`V${l.lapNumber} · ${l.car} · ${timeLabel(l.time)}`}</option>)}</select></label></div>
-        <TrackMap expanded trackName={active.id} lap={lap} pct={pct} onSeek={lap?setPct:undefined} corners={tab==='braking'?zones:EMPTY_ARRAY} turns={tab==='curves'||tab==='analysis'?turns:EMPTY_ARRAY} activeTurn={turnNumber} onTurnSelect={handleMapTurn} focusMarkers={tab==='analysis'?focusedMarkers:EMPTY_ARRAY} mapMode={tab==='analysis'&&reference?'delta':'normal'} heatSections={heatSections}/>
+        <TrackMap expanded trackName={active.id} lap={lap} pct={pct} onSeek={lap?setPct:undefined} corners={tab==='braking'?zones:EMPTY_ARRAY} turns={tab==='curves'||tab==='analysis'?turns:EMPTY_ARRAY} activeTurn={turnNumber} onTurnSelect={handleMapTurn} focusMarkers={tab==='analysis'?focusedMarkers:EMPTY_ARRAY} placingTurn={tab==='curves'?placingTurn:null} onPlaceTurn={placeTurn} mapMode={tab==='analysis'&&reference?'delta':'normal'} heatSections={heatSections}/>
         {tab==='analysis'&&focusedMarkers.length>0&&<MapDrivingKey markers={focusedMarkers} heat={Boolean(reference)}/>}
         <div className="hub-player" aria-label="Reproducción individual de vuelta">
           <div className="hub-player-top">
@@ -145,15 +173,22 @@ export default function TrackHub({laps,onCompare}){
           <input className="hub-player-range" aria-label="Posición de la vuelta" type="range" min="0" max="100" step="0.25" value={pct} disabled={!lap} onChange={e=>setPct(Number(e.target.value))} style={{'--progress':`${pct}%`}}/>
           <div className="hub-player-bottom"><span>INICIO · 0%</span><b>{pct.toFixed(1)}% DEL RECORRIDO</b><span>META · 100%</span></div>
         </div>
-        <div className="hub-note hub-map-accuracy"><CheckCircle2 size={18}/><p>El trazado procede de cartografía abierta. Los marcadores T requieren anotaciones de distancia y una vuelta con posición calibrada; sin ella se muestran en la lista, no en lugares inventados. Las distancias comunitarias pueden ser aproximadas.</p></div>
+        <div className="hub-note hub-map-accuracy"><CheckCircle2 size={18}/><p>Los trazados son cartografía abierta. Las posiciones incompatibles se ocultan: Bahréin tiene 15 curvas de GP, no las 20 indicadas por cierta fuente comunitaria. Puedes ubicar manualmente una curva desde la pestaña Curvas; para análisis, la vuelta debe tener posición X/Z calibrada.</p></div>
       </div>
       <section className="trace-card hub-data-panel"><div className="hub-tab-bar" role="tablist" aria-label="Explorar circuito"><button role="tab" aria-selected={tab==='curves'} className={tab==='curves'?'active':''} onClick={()=>setTab('curves')}>Curvas</button><button role="tab" aria-selected={tab==='braking'} className={tab==='braking'?'active':''} onClick={()=>setTab('braking')}>Frenadas</button><button role="tab" aria-selected={tab==='performance'} className={tab==='performance'?'active':''} onClick={()=>setTab('performance')}>Rendimiento</button><button role="tab" aria-selected={tab==='analysis'} className={tab==='analysis'?'active':''} onClick={()=>setTab('analysis')}>Analizar conducción</button></div>
-        {tab==='curves'&&<><div className="hub-data-intro"><span className="trace-overline">CORNER DIRECTORY</span><h2>Guía de curvas</h2><p>{annotationsPending?'Consultando ubicaciones documentadas…':annotations?`${turns.filter(t=>t.pct!=null).length} referencias orientativas. ${annotations.source||'Datos comunitarios'}; no son mediciones FIA.`:'Numeración disponible. Sin anotaciones de ubicación: conecta Internet o instala los datos locales.'}</p></div>
+        {tab==='curves'&&<><div className="hub-data-intro"><span className="trace-overline">CORNER DIRECTORY</span><h2>Guía de curvas</h2><p>{annotationsPending?'Comprobando coherencia de las anotaciones…':annotations?.warning?annotations.warning:annotations?`${turns.filter(t=>t.pct!=null||t.mapPosition).length} ubicaciones disponibles. ${annotations.source||'Datos comunitarios'}.`: 'Numeración disponible. Sin posiciones verificadas.'}</p></div>
           <div className="hub-curves-layout"><TurnList turns={turns} chosen={turnNumber} onSelect={pickTurn} statsByTurn={statsByTurn}/>
           <div className="hub-turn-focus"><span className="hub-focus-label">CURVA SELECCIONADA · {selectedTurn?.label}</span><strong>{selectedTurn?.name||`Curva ${selectedTurn?.number}`}</strong>
-            <p>{selectedTurn?.pct!=null?`Ubicación estimada: alrededor del ${selectedTurn.pct.toFixed(1)}% del recorrido. No es una marca oficial.`:'Aún no existe una posición confirmada para esta curva en los datos del proyecto.'}</p>
+            <p>{selectedTurn?.origin==='user'?'Posición ajustada manualmente en este navegador; no es un dato oficial.':selectedTurn?.pct!=null?`Ubicación aproximada: ${selectedTurn.pct.toFixed(1)}% del recorrido.`:'Sin posición confiable. Puedes ubicarla en el mapa usando un plano oficial como referencia.'}</p>
+            <div className="v083-edit-actions">
+              <button type="button" className="trace-btn-ghost" onClick={()=>{stopPlayback();setTab('curves');setPlacingTurn(placingTurn===turnNumber?null:turnNumber);}}>{placingTurn===turnNumber?'Cancelar ubicación':`Ajustar T${turnNumber} en el mapa`}</button>
+              {selectedTurn?.origin==='user'&&<button type="button" className="trace-btn-ghost" onClick={()=>clearTurn(turnNumber)}>Quitar corrección</button>}
+            </div>
+            {active?.id==='Bahrain'&&<a href="https://www.fia.com/sites/default/files/doc_1_-_2022_sakhir_event_-_circuit_map_-_bahrain_2022.pdf" target="_blank" rel="noopener noreferrer" className="v083-official-map">Consultar plano numerado de la FIA para Bahréin ↗</a>}
+            {Object.keys(manualTurns).length>0&&<button type="button" className="trace-btn-ghost v083-export" onClick={exportCorrections}>Exportar mis ubicaciones ({Object.keys(manualTurns).length})</button>}
+            {placingTurn===turnNumber&&<p className="v083-edit-hint">Haz clic en la posición de T{turnNumber} sobre el trazado grande. Se guardará solamente en este navegador.</p>}
             {turnStats&&<div className="hub-focus-metrics"><span>Vel. mínima ~<b>{turnStats.minSpeed} km/h</b></span><span>Freno máximo ~<b>{turnStats.maxBrake}%</b></span><span>Acelerador medio ~<b>{turnStats.meanThrottle}%</b></span></div>}
-            <div className="c07-nav-actions"><button className="trace-btn-red hub-wide" disabled={!lap} onClick={()=>lap&&onCompare(lap,selectedTurn?.pct||0)}>Comparar en {selectedTurn?.label} <ArrowRight size={16}/></button><button className="trace-btn-ghost hub-wide" onClick={()=>setTab('analysis')}>Analizar frenada y salida · {selectedTurn?.label} <Gauge size={16}/></button></div>
+            <div className="c07-nav-actions"><button className="trace-btn-red hub-wide" disabled={!lap||!Number.isFinite(selectedTurn?.pct)} onClick={()=>lap&&onCompare(lap,selectedTurn.pct)}>Comparar en {selectedTurn?.label} <ArrowRight size={16}/></button><button className="trace-btn-ghost hub-wide" disabled={!Number.isFinite(selectedTurn?.pct)} onClick={()=>setTab('analysis')}>Analizar frenada y salida · {selectedTurn?.label} <Gauge size={16}/></button></div>
           </div></div></>}
         {tab==='braking'&&<><div className="hub-data-intro"><span className="trace-overline">BRAKING ANALYSIS</span><h2>Mis puntos de frenada</h2><p>Eventos reales del pedal de freno: inicio, presión máxima y duración. No tienen por qué corresponder uno a uno con las curvas T.</p></div>
           {zones.length?<div className="hub-turn-list">{zones.map(z=><button key={z.label} className="hub-turn-row" onClick={()=>setPct(z.pct)}><span className="hub-turn-number">{z.label}</span><span className="hub-turn-row-copy"><b>{z.title}</b><small>Inicio: {Math.round(z.startM)} m · {z.pct.toFixed(1)} % de vuelta</small></span><span className="hub-turn-speed">{Math.round(z.peakBrake)} %<small>{z.duration.toFixed(2)} s de frenada</small></span><ChevronRight size={15}/></button>)}</div>:<div className="hub-empty-message">No se han detectado frenadas significativas en esta vuelta, o no hay un registro seleccionado.</div>}

@@ -3,6 +3,7 @@ import { AlertCircle, Map, Navigation2, RefreshCw, ZoomIn, ZoomOut, Maximize2 } 
 import { getCircuit, loadCircuitAtlas } from '../utils/circuits';
 import { prepareTrack, alignLapToTrack, pointAtPct } from '../utils/trackGeometry';
 import { percentAtSeconds, sampleAt } from '../utils/drivingInsights';
+import { nearestGeometryPoint } from '../utils/turnPlacement';
 
 /** Static geometry never recalculates on playhead updates. */
 const CourseDrawing=memo(function CourseDrawing({shape,zones,turns,activeTurn,onTurnSelect}){
@@ -22,8 +23,8 @@ const TurnPins=memo(function TurnPins({turns,activeTurn,onTurnSelect}){
   return <>
     {turns.map(turn=><g key={turn.number} className={`hub-turn-dot ${activeTurn===turn.number?'active':''} ${turn.showLabel?'':'hub-turn-minimal'}`} transform={`translate(${turn.x} ${turn.y})`} role={onTurnSelect?'button':undefined} tabIndex={onTurnSelect?0:undefined}
       aria-label={`Seleccionar curva T${turn.number}`}
-      onClick={event=>{event.stopPropagation();onTurnSelect?.(turn.number);}}
-      onKeyDown={event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();onTurnSelect?.(turn.number);}}}>
+      onClick={event=>{if(!onTurnSelect)return;event.stopPropagation();onTurnSelect(turn.number);}}
+      onKeyDown={event=>{if(!onTurnSelect)return;if(event.key==='Enter'||event.key===' '){event.preventDefault();onTurnSelect?.(turn.number);}}}>
       <title>T{turn.number}{turn.name?` · ${turn.name}`:''} · ubicación aproximada; amplía el mapa para ver más números</title>
       <circle className="hub-turn-hit" r="11"/>
       <circle className="hub-turn-icon" r={turn.showLabel?7.6:3.3}/>
@@ -41,7 +42,7 @@ const StaticTelemetryLayers=memo(function StaticTelemetryLayers({segments,marker
 });
 
 /** Atlas is common to Circuit Hub and comparison; only coordinates change on seek. */
-function TrackMap({lap,trackName,pct=0,onSeek,corners=[],compact=false,expanded=false,turns=[],activeTurn=null,onTurnSelect,comparisonLap=null,heatSections=[],mapMode='normal',focusMarkers=[]}){
+function TrackMap({lap,trackName,pct=0,onSeek,corners=[],compact=false,expanded=false,turns=[],activeTurn=null,onTurnSelect,comparisonLap=null,heatSections=[],mapMode='normal',focusMarkers=[],placingTurn=null,onPlaceTurn}){
   const target=trackName||lap?.track||'';
   const catalog=getCircuit(target);
   const [atlas,setAtlas]=useState(null),[status,setStatus]=useState('loading'),[attempt,setAttempt]=useState(0);
@@ -83,10 +84,11 @@ function TrackMap({lap,trackName,pct=0,onSeek,corners=[],compact=false,expanded=
   }).filter(Boolean):[],[geometry,alignment,corners]);
   const turnMarkers=useMemo(()=>{
     if(!geometry)return [];
-    return turns.filter(t=>Number.isFinite(t.pct)).map(t=>{
+    return turns.filter(t=>Number.isFinite(t.pct)||t.mapPosition).map(t=>{
       // Alignment based on actual recorded X/Z is preferred. With no coherent
       // positioning, the GeoJSON ring's origin isn't verified as start/finish:
       // no misplaced numbered markers are drawn.
+      if(t.mapPosition)return {...t,...t.mapPosition};
       if(!alignment)return null;
       const point=pointAtPct(geometry,alignment,t.pct);
       return point?{...t,...point}:null;
@@ -139,12 +141,18 @@ function TrackMap({lap,trackName,pct=0,onSeek,corners=[],compact=false,expanded=
   const viewWidth=640/zoom,viewHeight=430/zoom;
   const viewBox=`${center.x-viewWidth/2} ${center.y-viewHeight/2} ${viewWidth} ${viewHeight}`;
   function seek(e){
-    if(!geometry||!alignment||!onSeek)return;
+    if(!geometry)return;
+    if(!placingTurn && (!alignment||!onSeek))return;
     const matrix=e.currentTarget.getScreenCTM();
     if(!matrix)return;
     const location=e.currentTarget.createSVGPoint();
     location.x=e.clientX;location.y=e.clientY;
     const {x,y}=location.matrixTransform(matrix.inverse());
+    if(placingTurn && onPlaceTurn){
+      const point=nearestGeometryPoint(geometry,x,y);
+      if(point&&point.distance<Math.max(18,35/zoom))onPlaceTurn(placingTurn,{x:point.x,y:point.y});
+      return;
+    }
     let best=Infinity,next=0;
     for(let i=0;i<=200;i++){
       const p=pointAtPct(geometry,alignment,i/2),distance=(p.x-x)**2+(p.y-y)**2;
@@ -163,15 +171,16 @@ function TrackMap({lap,trackName,pct=0,onSeek,corners=[],compact=false,expanded=
           <button disabled={zoom>=3} aria-label="Acercar mapa" title="Acercar en torno al coche o curva" onClick={()=>changeZoom(zoom+0.5)}><ZoomIn size={18}/></button>
           <button disabled={zoom===1} aria-label="Restablecer ampliación" title="Ver todo el circuito" onClick={()=>changeZoom(1)}><Maximize2 size={17}/></button>
         </div>}
-        <svg className={`trace-map-svg ${onSeek&&alignment?'clickable':''}`} viewBox={viewBox} role="img" aria-label={`Mapa de ${catalog.id}${marker?`, vehículo al ${pct.toFixed(1)} por ciento`:''}`} onClick={seek}>
+        <svg className={`trace-map-svg ${(onSeek&&alignment)||placingTurn?'clickable':''} ${placingTurn?'trace-placement-mode':''}`} viewBox={viewBox} role="img" aria-label={`Mapa de ${catalog.id}${marker?`, vehículo al ${pct.toFixed(1)} por ciento`:''}`} onClick={seek}>
           <CourseDrawing shape={geometry} zones={mapMode==='normal'?zoneMarkers:[]} turns={visibleTurns}/>
           <StaticTelemetryLayers segments={paintedSegments} markers={visibleEventLayer}/>
-          <TurnPins turns={visibleTurns} activeTurn={activeTurn} onTurnSelect={onTurnSelect}/>
+          <TurnPins turns={visibleTurns} activeTurn={activeTurn} onTurnSelect={placingTurn?null:onTurnSelect}/>
           {ghost&&<g className="v08-ghost-marker" transform={`translate(${ghost.x} ${ghost.y})`} pointerEvents="none"><title>Vuelta B al mismo tiempo transcurrido · {otherPct.toFixed(1)}% del circuito</title><circle r="15" opacity=".19"/><circle r="7"/><text y="-12" textAnchor="middle">B</text></g>}
           {marker&&<g className="trace-driver-marker"><circle cx={marker.x} cy={marker.y} r="13" className="trace-driver-glow"/><circle cx={marker.x} cy={marker.y} r="8" className="trace-driver-ring"/><circle cx={marker.x} cy={marker.y} r="3.8" className="trace-driver-core"/>{mapMode==='ghost'&&<text className="v08-a-label" x={marker.x} y={marker.y-13} textAnchor="middle">A</text>}</g>}
         </svg>
         <div className="trace-map-current"><Navigation2 size={14}/>{lap?`${pct.toFixed(1)}%`:'Mapa base'} <span>{marker?'posición calibrada':lap?'sin calibración':'sin vuelta seleccionada'}</span></div>
       </div>
+      {placingTurn&&<p className="v083-placement-banner">Colocando T{placingTurn}: haz clic en el trazado. Es una corrección manual, no una coordenada oficial.</p>}
       {detailMarkers.length>0&&<div className="v081-event-selector" aria-label="Mostrar un solo evento de conducción">
         <span className="v081-selector-title">Punto de la curva:</span>
         {detailMarkers.map(m=><button key={m.kind} type="button" className={visibleEvent?.kind===m.kind?'selected':''} aria-pressed={visibleEvent?.kind===m.kind}
@@ -182,12 +191,12 @@ function TrackMap({lap,trackName,pct=0,onSeek,corners=[],compact=false,expanded=
       </div>}
       {mapMode==='ghost'&&<p className="v08-map-method">{ghost?'A y B avanzan con el mismo tiempo transcurrido desde sus respectivas líneas de meta. Su separación ilustra la diferencia de recorrido.':'Ghost disponible solo cuando ambas vueltas tienen coordenadas X/Z compatibles y calibradas.'}</p>}
       {mapMode==='delta'&&<p className="v08-map-method">{paintedSegments.length?'Los tramos coloreados muestran la diferencia de tiempo local entre A y B.':alignment&&heatSections.length?'Las diferencias locales no superan ±0.035 s por tramo.':'Necesitamos vueltas compatibles y posición X/Z calibrada para colorear el trazado.'}</p>}
-      <div className="trace-map-foot"><span><i className="trace-foot-dot"/>{marker?'Coche sincronizado':'Posición no disponible'}</span><span><i className="trace-foot-zone"/>Zonas de velocidad mínima</span><span>{turnMarkers.length?`${turnMarkers.length} curvas de referencia localizadas`:'Curvas localizables con vuelta calibrada'}</span></div>
-      {turns.length>0&&!alignment&&<p className="trace-map-explainer">Curvas numeradas en la lista. Para ubicarlas sobre el mapa necesitamos una vuelta con coordenadas X/Z calibradas; no colocamos marcadores con posiciones supuestas.</p>}
+      <div className="trace-map-foot"><span><i className="trace-foot-dot"/>{marker?'Coche sincronizado':'Posición no disponible'}</span><span><i className="trace-foot-zone"/>Zonas de velocidad mínima</span><span>{turnMarkers.length?`${turnMarkers.length} curvas ubicadas (revisa su fuente)`:'Ubicaciones pendientes de calibrar'}</span></div>
+      {turns.length>0&&!alignment&&turnMarkers.length===0&&<p className="trace-map-explainer">Curvas numeradas en la lista. Para ubicarlas sobre el mapa necesitamos una vuelta con coordenadas X/Z calibradas; no colocamos marcadores con posiciones supuestas.</p>}
       {lap&&!alignment&&<p className="trace-map-explainer">La vuelta no tiene suficientes coordenadas compatibles para sincronizar el coche. Los gráficos y tiempos siguen disponibles.</p>}
       {!lap&&!turns.length&&<p className="trace-map-explainer">El mapa está disponible sin vueltas. Selecciona una grabación para ver tu posición.</p>}
     </>:<div className="trace-map-unavailable"><AlertCircle size={31}/><h4>{status==='loading'?'Cargando trazados…':status==='error'?'No se pudo cargar el atlas':'Trazado no disponible'}</h4><p>{status==='error'?'Comprueba la conexión o ejecuta tools/Instalar_Mapas_Offline.bat.':'El catálogo de trazados es independiente de tus vueltas.'}</p>{status==='error'&&<button className="trace-btn-ghost" onClick={()=>{setStatus('loading');setAttempt(a=>a+1);}}><RefreshCw size={15}/> Reintentar</button>}</div>}
-    <p className="trace-atlas-source">Trazados: bacinger/f1-circuits (MIT). Curvas: {catalog.id==='Monza'?'ApexTrace (11 referencias aproximadas de telemetría)':'RaceHooks (MIT, cuando haya anotaciones)'}. No se asumen límites de sectores oficiales.</p>
+    <p className="trace-atlas-source">Trazados: bacinger/f1-circuits (MIT). Curvas: {catalog.id==='Monza'?'ApexTrace (11 referencias aproximadas)':catalog.id==='Bahrain'?'FIA: numeración 15 curvas; posiciones solo revisadas manualmente':'RaceHooks (MIT, solo si sus datos son coherentes)'}. No se asumen límites de sectores oficiales.</p>
   </section>;
 }
 export default memo(TrackMap);

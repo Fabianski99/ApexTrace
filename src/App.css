@@ -417,3 +417,14 @@
 .trace-history-sharing{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
 .trace-history-sharing button{min-height:40px}
 @media(max-width:680px){.trace-history-sharing>*{width:100%}.trace-dropzone{padding:22px 11px}.trace-sharing-benefits{flex-direction:column;gap:10px}}
+
+/* v0.8.3: modest and accessible correction controls, no animation overhead. */
+.v083-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin:5px 0}
+.v083-edit-actions button{font-size:11px;padding:10px 12px}
+.v083-edit-hint,.v083-placement-banner{border:1px solid #df8f50;background:#38291e;color:#f9d2a6;border-radius:8px;padding:12px;font-size:11px;line-height:1.6}
+.trace-placement-mode{cursor:crosshair!important}
+.v083-placement-banner{margin:10px 0}
+
+.v083-official-map{color:#a9c7ff;font-size:11px;text-decoration:underline;text-underline-offset:3px}
+
+.v083-export{align-self:flex-start;font-size:10px}

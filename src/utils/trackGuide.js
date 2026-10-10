@@ -62,39 +62,78 @@ const MONZA_REFERENCE = {
     number,name,distance:5793*pct/100,approximate:true,origin:'apextrace',
   })),
 };
-const CACHE_PREFIX='apextrace:corner-guide-v06:';
+const CACHE_PREFIX='apextrace:corner-guide-v083:';
 const promises=new Map();
 const timeoutFetch=async (url)=>{
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),5500);
   try{const res=await fetch(url,{signal:ctrl.signal,cache:'force-cache'});if(!res.ok)throw Error('HTTP '+res.status);return res.json();}
   finally{clearTimeout(timer);}
 };
-const parse=(value)=>{
+export const parse=(value,track)=>{
   if(!value||!Array.isArray(value.corners)||!Number.isFinite(value.lapLengthKm)||value.lapLengthKm<1)return null;
   const max=value.lapLengthKm*1000;
+  // Never silently truncate/renumber feeds for different variants of a track.
+  // E.g. RaceHooks lists 20 corners for Bahrain, FIA GP circuit has 15.
+  const expected=guideFor(track).count;
+  if(expected && (value.corners.length!==expected ||
+      value.corners.some((c,i)=>c.number!==i+1)))return null;
+  if(value.circuitId && circuitId(value.circuitId)!==circuitId(track) && value.circuitId!==(SLUGS[circuitId(track)]||''))return null;
   const seen=new Set();
   const corners=value.corners.filter(c=>{
     if(!Number.isInteger(c.number)||c.number<1||c.number>40||seen.has(c.number))return false;
     seen.add(c.number);return true;
   }).map(c=>({number:c.number,name:typeof c.name==='string'?c.name.slice(0,65):'',type:typeof c.type==='string'?c.type:'',distance:Number.isFinite(c.distanceFromSf)&&c.distanceFromSf>=0&&c.distanceFromSf<max?c.distanceFromSf:null,approximate:value._accuracy!=null,origin:'community'}));
-  return {source:'RaceHooks — datos comunitarios (MIT)',length:max,turns:corners};
+  // Nonmonotonic, repeated or out-of-bounds distances cannot be safely mapped.
+  if(corners.some(c=>!Number.isFinite(c.distance)) ||
+     corners.some((c,i)=>i>0 && c.distance<=corners[i-1].distance))return null;
+  return {source:'RaceHooks — anotaciones comunitarias (MIT; orientativas)',length:max,turns:corners};
 };
+async function reviewedAnnotations(key,slug){
+  // The maintainer may publish checked pin locations together with Vercel.
+  // These locations are manually annotated, not official FIA measurements.
+  try{
+    const data=await timeoutFetch(`/data/corners-reviewed/${slug}.json`);
+    if(data?.schema!=='apextrace-turns-v1'||circuitId(data.track)!==key||!Array.isArray(data.turns))return null;
+    const count=guideFor(key).count;
+    if(data.turns.length<1||data.turns.length>count)return null;
+    const seen=new Set(),turns=[];
+    for(const t of data.turns){
+      if(!Number.isInteger(t.number)||t.number<1||t.number>count||seen.has(t.number)||
+        !Number.isFinite(t.x)||!Number.isFinite(t.y)||t.x<0||t.x>640||t.y<0||t.y>430)return null;
+      seen.add(t.number);
+      turns.push({number:t.number,mapPosition:{x:t.x,y:t.y},origin:'reviewed',approximate:true});
+    }
+    return {source:'Posiciones revisadas manualmente para ApexTrace (no FIA)',length:null,turns,
+      warning:turns.length<count?`Hay ${turns.length} curvas ubicadas de ${count}. Completa las restantes con el editor del mapa.`:null};
+  }catch{return null;}
+}
 export async function loadTurnAnnotations(track){
   const key=circuitId(track);const slug=SLUGS[key]||key;
   if(!key)return null;
-  // Las notas comunitarias de Monza son incompletas: no esconder T8–T11.
-  if(key==='monza')return Promise.resolve(MONZA_REFERENCE);
+  // Files added to public/data/corners-reviewed are loaded before external sources.
+  // In the live web they allow everyone to see the same edited pins.
+  // (No personal telemetry is ever published.)
+  if(key==='monza')return Promise.resolve(reviewedAnnotations(key,slug).then(v=>v||MONZA_REFERENCE));
+  // This source is known to describe a 20-turn Bahrain variant/miscount.
+  // Do not retry three identical invalid providers on every visit.
+  if(key==='bahrain')return Promise.resolve(reviewedAnnotations(key,slug).then(v=>v||({source:'Bahréin GP: 15 curvas (FIA)',length:null,turns:[],warning:
+    'La anotación descargada enumera 20 curvas y no corresponde a las 15 del trazado de GP. Se ha desactivado para evitar ubicaciones falsas. Puedes ajustar las curvas en el mapa consultando el plano oficial.'})));
   if(promises.has(key))return promises.get(key);
   const task=(async()=>{
-    try{const cached=localStorage.getItem(CACHE_PREFIX+key);if(cached){const data=parse(JSON.parse(cached));if(data)return data;}}catch{/* private browser */}
+    const curated=await reviewedAnnotations(key,slug);if(curated)return curated;
+    try{const cached=localStorage.getItem(CACHE_PREFIX+key);if(cached){const data=parse(JSON.parse(cached),track);if(data)return data;}}catch{/* private browser */}
     const urls=[`/data/corners/${slug}.json`,
       `https://raw.githubusercontent.com/racehooks/racehooks-corner-map/main/data/circuits/${slug}.json`,
       `https://cdn.jsdelivr.net/gh/racehooks/racehooks-corner-map@main/data/circuits/${slug}.json`];
-    for(const url of urls){try{const json=await timeoutFetch(url),parsed=parse(json);if(!parsed)continue;
+    for(const url of urls){try{const json=await timeoutFetch(url),parsed=parse(json,track);if(!parsed)continue;
       try{localStorage.setItem(CACHE_PREFIX+key,JSON.stringify(json));}catch{/* optional */}
       return parsed;
     }catch{/* try another provider */}}
-    return null;
+    // Fail closed: preserve the numbered directory, but no pins or corner coaching
+    // if the available source is for a different track variant or is inconsistent.
+    return {source:'Anotaciones no validadas',length:null,turns:[],warning:
+      key==='bahrain'?'La fuente disponible enumera 20 curvas; Bahréin GP tiene 15. Se descartaron ubicaciones erróneas. Puedes ubicar manualmente las 15 curvas sobre el mapa.':
+      'Las posiciones disponibles están incompletas o no coinciden con la numeración de este circuito.'};
   })();
   promises.set(key,task);return task;
 }
@@ -102,7 +141,7 @@ export function numberedTurns(track,annotations){
   const {count}=guideFor(track);
   const known=new Map(annotations?.turns?.map(t=>[t.number,t])||[]);
   return Array.from({length:count},(_,i)=>({number:i+1,label:`T${i+1}`,...(known.get(i+1)||{}),
-    pct:Number.isFinite(known.get(i+1)?.distance) ? 100*known.get(i+1).distance/annotations.length : null}));
+    pct:Number.isFinite(known.get(i+1)?.distance)&&Number.isFinite(annotations?.length)&&annotations.length>0 ? 100*known.get(i+1).distance/annotations.length : null}));
 }
 export function lapTurnStats(lap,turn){
   if(!lap?.points?.length||!Number.isFinite(turn?.pct))return null;
