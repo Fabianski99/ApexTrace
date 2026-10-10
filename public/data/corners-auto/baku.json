@@ -1,0 +1,89 @@
+{
+  "schema": "apextrace-corner-distances-v1",
+  "track": "baku",
+  "year": 2025,
+  "length": 6003,
+  "source": "MultiViewer 2025 / FastF1 (curvas aproximadas, no oficiales)",
+  "turns": [
+    {
+      "number": 1,
+      "distance": 296.37
+    },
+    {
+      "number": 2,
+      "distance": 635.82
+    },
+    {
+      "number": 3,
+      "distance": 1499.65
+    },
+    {
+      "number": 4,
+      "distance": 1724.39
+    },
+    {
+      "number": 5,
+      "distance": 2060.56
+    },
+    {
+      "number": 6,
+      "distance": 2118.62
+    },
+    {
+      "number": 7,
+      "distance": 2506.29
+    },
+    {
+      "number": 8,
+      "distance": 2704.34
+    },
+    {
+      "number": 9,
+      "distance": 2730.56
+    },
+    {
+      "number": 10,
+      "distance": 2760.06
+    },
+    {
+      "number": 11,
+      "distance": 2807.35
+    },
+    {
+      "number": 12,
+      "distance": 2864.47
+    },
+    {
+      "number": 13,
+      "distance": 3267.12
+    },
+    {
+      "number": 14,
+      "distance": 3494.67
+    },
+    {
+      "number": 15,
+      "distance": 3717.53
+    },
+    {
+      "number": 16,
+      "distance": 4077.11
+    },
+    {
+      "number": 17,
+      "distance": 4266.73
+    },
+    {
+      "number": 18,
+      "distance": 4505.52
+    },
+    {
+      "number": 19,
+      "distance": 4660.02
+    },
+    {
+      "number": 20,
+      "distance": 4973.25
+    }
+  ]
+}
