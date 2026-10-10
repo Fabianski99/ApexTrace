@@ -6,9 +6,11 @@ import Insights from './Insights';
 import AdvancedCornerAnalysis from './AdvancedCornerAnalysis';
 import { CornerCoach, ComparisonOverview, MapDrivingKey } from './DrivingCoach';
 import { buildDeltaSections, markersForTurn, theoreticalIdeal } from '../utils/drivingInsights';
-import { loadTurnAnnotations, numberedTurns } from '../utils/trackGuide';
+import { guideFor, loadTurnAnnotations, numberedTurns } from '../utils/trackGuide';
+import { inferTurnsFromLap } from '../utils/automaticTurns';
 import { compareTurnSamples } from '../utils/cornerAnalysis';
-import { makeComparison, sameCarTrack, signedTime, timeLabel } from '../utils/analysis';
+import { makeComparison, sameCircuitLaps, signedTime, timeLabel } from '../utils/analysis';
+import { circuitId } from '../utils/circuits';
 
 const PEDAL_DOMAIN=[0,100];
 const EMPTY_CORNERS=[];
@@ -24,19 +26,33 @@ export default function Comparison({ laps, idA, idB, setIdA, setIdB, targetTrack
   const [mapMode,setMapMode]=useState('delta');
   const a=laps.find(l=>l.id===idA);
   const b=laps.find(l=>l.id===idB);
-  const compatible=sameCarTrack(a,b);
+  const compatible=sameCircuitLaps(a,b);
   const result=useMemo(()=>compatible?makeComparison(a,b):null,[compatible,a,b]);
   useEffect(()=>{let active=true;setTurnAnnotations(null);if(!compatible||!a)return;
     loadTurnAnnotations(a.track).then(v=>{if(active)setTurnAnnotations(v);}).catch(()=>{});
     return()=>{active=false;};
   },[compatible,a?.track]);
-  const advancedTurns=useMemo(()=>compatible?numberedTurns(a.track,turnAnnotations):[],[compatible,a?.track,turnAnnotations]);
-  const advancedItems=useMemo(()=>compatible?compareTurnSamples(a,b,advancedTurns):[],[compatible,a,b,advancedTurns]);
+  const automaticGuide=useMemo(()=>compatible&&a?inferTurnsFromLap(a,guideFor(a.track).count):null,[compatible,a]);
+  const advancedTurns=useMemo(()=>{
+    if(!compatible)return [];
+    const reliable=turnAnnotations?.turns?.length===guideFor(a.track).count;
+    return numberedTurns(a.track,reliable?turnAnnotations:(automaticGuide||turnAnnotations));
+  },[compatible,a?.track,turnAnnotations,automaticGuide]);
+  const estimatedCorners=Boolean(automaticGuide&&turnAnnotations?.turns?.length!==guideFor(a?.track).count);
+  const advancedItems=useMemo(()=>compatible&&!estimatedCorners?compareTurnSamples(a,b,advancedTurns):[],[compatible,a,b,advancedTurns,estimatedCorners]);
   const sectionsV08=useMemo(()=>compatible?buildDeltaSections(a,b):[],[compatible,a,b]);
-  const ideal=useMemo(()=>a?theoreticalIdeal(laps,a.track,a.car):null,[laps,a?.track,a?.car]);
+  const ideal=useMemo(()=>a?theoreticalIdeal(laps,a.track):null,[laps,a?.track]);
   const focusedItem=useMemo(()=>advancedItems.find(t=>t.number===advancedTurn)||null,[advancedItems,advancedTurn]);
   const focusMarkers=useMemo(()=>markersForTurn(a,focusedItem),[a,focusedItem]);
-  const filteredLaps=targetTrack?laps.filter(l=>l.track===targetTrack):laps;
+  const filteredLaps=useMemo(()=>targetTrack?laps.filter(l=>circuitId(l.track)===circuitId(targetTrack)):laps,[laps,targetTrack]);
+  // B only shows the same circuit, without any team restriction.
+  const referenceOptions=useMemo(()=>a?filteredLaps.filter(l=>l.id!==a.id && circuitId(l.track)===circuitId(a.track)):[],[a,filteredLaps]);
+  useEffect(()=>{
+    if(!a || (b && sameCircuitLaps(a,b)))return;
+    // Automatically select the best valid compatible circuit lap, including other teams.
+    const chosen=[...referenceOptions].filter(l=>l.valid!==false).sort((x,y)=>x.time-y.time)[0]||referenceOptions[0];
+    if(idB!==(chosen?.id||''))setIdB(chosen?.id||'');
+  },[a,b,idB,referenceOptions,setIdB]);
   useEffect(()=>{setPlaying(false);setPct(0);},[idA,idB]);
   useEffect(()=>{if(focus?.token!=null){setPlaying(false);setPct(Math.min(100,Math.max(0,focus.pct||0)));}},[focus?.token]);
   useEffect(()=>{
@@ -56,17 +72,19 @@ export default function Comparison({ laps, idA, idB, setIdA, setIdB, targetTrack
   const cursor= result?.data[Math.min(result.data.length-1,Math.max(0,Math.round(pct*4)))];
   const delta=a&&b?a.time-b.time:0;
   return <div className="trace-stack">
-    <header className="trace-page-title"><div><span className="trace-overline">LAP ANALYSIS / 01</span><h1>Comparar vueltas<span className="trace-dot">.</span></h1><p>Dos vueltas del mismo coche y circuito. Un solo recorrido para entender dónde cambias el ritmo.</p></div><div className="trace-header-decor"><Activity size={30}/></div></header>
+    <header className="trace-page-title"><div><span className="trace-overline">LAP ANALYSIS / 01</span><h1>Comparar vueltas<span className="trace-dot">.</span></h1><p>Compara dos vueltas del mismo circuito, aunque los pilotos hayan utilizado equipos diferentes.</p></div><div className="trace-header-decor"><Activity size={30}/></div></header>
     <div className="trace-compare-selectors">
       <label className="trace-lap-selector"><span><i className="trace-color-a"/> VUELTA A <em>Principal</em></span><select value={idA} onChange={e=>setIdA(e.target.value)}><option value="">Selecciona una vuelta</option>{filteredLaps.map(l=><option value={l.id} key={l.id}>{optionLabel(l)}</option>)}</select><strong>{a?timeLabel(a.time):'—'}</strong><small>{a?`${a.track} · ${a.car}`:'Esperando selección'}</small></label>
       <button className="trace-swap" title="Intercambiar A y B" onClick={()=>{setIdA(idB);setIdB(idA);}}><ArrowLeftRight size={21}/></button>
-      <label className="trace-lap-selector"><span><i className="trace-color-b"/> VUELTA B <em>Referencia propia</em></span><select value={idB} onChange={e=>setIdB(e.target.value)}><option value="">Selecciona una vuelta</option>{filteredLaps.map(l=><option value={l.id} key={l.id}>{optionLabel(l)}</option>)}</select><strong>{b?timeLabel(b.time):'—'}</strong><small>{b?`${b.track} · ${b.car}`:'Esperando selección'}</small></label>
+      <label className="trace-lap-selector"><span><i className="trace-color-b"/> VUELTA B <em>Referencia seleccionada</em></span><select value={idB} onChange={e=>setIdB(e.target.value)}><option value="">Selecciona una vuelta del circuito</option>{referenceOptions.map(l=><option value={l.id} key={l.id}>{optionLabel(l)}</option>)}</select><strong>{b?timeLabel(b.time):'—'}</strong><small>{b?`${b.track} · ${b.car}`:'Esperando selección'}</small></label>
     </div>
-    {!a||!b ? <div className="trace-empty-large"><Activity size={37}/><h3>Selecciona dos vueltas</h3><p>Sincroniza tus vueltas de F1 25 desde el Recorder y escoge dos registros para comparar.</p><button onClick={onRecorder} className="trace-btn-red">Ir al Recorder <ChevronRight size={16}/></button></div> : !compatible ? <div className="trace-alert"><CircleAlert size={21}/><div><strong>Estas vueltas no son comparables.</strong><p>Elige dos registros diferentes, del mismo coche y circuito. Si cambias de circuito o equipo, selecciona ambos nuevamente.</p></div></div> : <>
+    {!a||!b ? <div className="trace-empty-large"><Activity size={37}/><h3>Selecciona dos vueltas</h3><p>Sincroniza tus vueltas de F1 25 desde el Recorder y escoge dos registros para comparar.</p><button onClick={onRecorder} className="trace-btn-red">Ir al Recorder <ChevronRight size={16}/></button></div> : !compatible ? <div className="trace-alert"><CircleAlert size={21}/><div><strong>Estas vueltas no son comparables.</strong><p>Elige dos vueltas diferentes del mismo circuito de F1 25. El equipo puede ser distinto.</p></div></div> : <>
       <div className="v081-reference-explainer v081-reference-comparator">
-        <strong>Comparación entre tus propias vueltas</strong>
-        <p><b>A:</b> V{a.lapNumber} · {timeLabel(a.time)} · {a.car} (vuelta analizada). <b>B:</b> V{b.lapNumber} · {timeLabel(b.time)} · {b.car} (tu referencia seleccionada). Todos los deltas y valores B proceden de estos dos archivos grabados con F1 25.</p>
+        <strong>Comparación de vueltas guardadas o importadas</strong>
+        <p><b>A:</b> V{a.lapNumber} · {timeLabel(a.time)} · {a.car} (vuelta analizada). <b>B:</b> V{b.lapNumber} · {timeLabel(b.time)} · {b.car} (referencia seleccionada). Los deltas y valores B proceden de estos dos archivos F1 25.</p>
       </div>
+      {a.car!==b.car&&<div className="trace-alert"><CircleAlert size={18}/><div><strong>Comparación entre equipos distintos: {a.car} vs {b.car}.</strong><p>Se permite comparar sin restricciones de coche. Para interpretar las diferencias como conducción, comprueba que ambos jugaron con rendimiento equivalente y condiciones similares; ApexTrace no puede verificar ese ajuste.</p></div></div>}
+      {Number.isFinite(a.distance)&&Number.isFinite(b.distance)&&a.distance>0&&b.distance>0&&Math.abs(a.distance-b.distance)/Math.max(a.distance,b.distance)>.02&&<div className="trace-alert"><CircleAlert size={18}/>Distancias registradas distintas para este circuito. Comprueba que ambas vueltas usen la misma variante del trazado; la comparación porcentual podría ser inexacta.</div>}
       {(a.valid===false||b.valid===false)&&<div className="trace-alert"><CircleAlert size={18}/>Una de las vueltas fue invalidada por F1 25. Se muestra para analizar conducción, no como mejor tiempo válido.</div>}
       <div className="trace-metric-grid trace-compare-metrics">
         <div className="trace-metric"><span>DELTA A − B</span><strong className={delta>0?'trace-loss':delta<0?'trace-gain':''}>{signedTime(delta)}</strong><small>{delta>0?'A es más lenta':delta<0?'A es más rápida':'Igual ritmo'}</small></div>
@@ -87,6 +105,7 @@ export default function Comparison({ laps, idA, idB, setIdA, setIdB, targetTrack
           <div className="v08-map-aside">
             <div className="v08-map-aside-intro"><span className="trace-overline">ENTRENAMIENTO PERSONAL</span><h3>Elige una curva</h3><p>Estudiamos tus dos vueltas. No usamos tiempos externos ni una trazada ideal inventada.</p></div>
             <label className="v08-turn-picker">Curva en el mapa<select value={advancedTurn} onChange={e=>{const num=Number(e.target.value);setAdvancedTurn(num);const t=advancedTurns.find(v=>v.number===num);if(Number.isFinite(t?.pct))setPct(t.pct);setPlaying(false);}}>{advancedTurns.map(t=><option key={t.number} value={t.number}>{t.label}{t.name?` · ${t.name}`:''}{!Number.isFinite(t.pct)?' (sin ubicación)':''}</option>)}</select></label>
+            {estimatedCorners&&<p className="v08-map-disclaimer">Curvas T estimadas a partir de X/Z: se pueden localizar en el mapa, pero los consejos por curva estarán disponibles cuando instales las referencias de circuito 2025.</p>}
             <CornerCoach item={focusedItem} onExplore={focusedItem?()=>{setMapMode('brake');setPct(focusedItem.pct);setPlaying(false);}:null} compact/>
             <MapDrivingKey markers={mapMode==='brake'?focusMarkers:[]} heat={mapMode==='delta'} ghost={mapMode==='ghost'}/>
             <p className="v08-map-disclaimer">El punto M marca el lugar más lento de esta zona; no identifica el apex geométrico. Frenar más tarde no siempre es mejor.</p>

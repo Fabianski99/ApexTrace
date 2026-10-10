@@ -24,7 +24,7 @@ export default function AdvancedCornerAnalysis({items,turns,selectedTurn=1,onSel
       <div className="c07-summary">
         <span><Activity size={16}/> <b>{summary.measured}</b> curvas con posición disponible</span>
         <span><Gauge size={16}/> <b>{summary.comparable}</b> tramos comparables</span>
-        <span><Timer size={16}/> {reference?`Referencia propia: vuelta ${reference.lapNumber} · ${reference.car} · ${reference.time.toFixed(3)} s`:'Sin otra vuelta de referencia compatible'}</span>
+        <span><Timer size={16}/> {reference?`Referencia: vuelta ${reference.lapNumber} · ${reference.car} · ${reference.time.toFixed(3)} s`:'Sin otra vuelta válida del circuito'}</span>
       </div>
       {reference&&summary.comparable>0&&<div className="c07-opportunities">
         <div><span className="c07-opportunity-title">Mayor pérdida aproximada</span>{summary.biggestLoss.length?summary.biggestLoss.map(t=><button onClick={()=>onSelect(t.number,t.pct)} key={t.number}><b>{t.label}</b><span>{signedTime(t.delta)}</span><ArrowRight size={15}/></button>):<small>No hay pérdidas de al menos 0.035 s por tramo.</small>}</div>
@@ -34,7 +34,7 @@ export default function AdvancedCornerAnalysis({items,turns,selectedTurn=1,onSel
       <div className="c07-turn-controls"><label htmlFor={`c07-turn-${variant}`}>Curva a estudiar</label><select id={`c07-turn-${variant}`} value={selectedTurn} onChange={e=>{const number=Number(e.target.value),t=turns.find(v=>v.number===number);onSelect(number,t?.pct);}}>{turns.map(t=><option value={t.number} key={t.number}>{t.label} · {t.name||`Curva ${t.number}`}{Number.isFinite(t.pct)?'':' · sin posición'}</option>)}</select></div>
       {focused?<>
         <div className="c07-corner-heading"><div><span className="c07-corner-pill">{focused.label}</span><div><h4>{focused.name}</h4><p>Alrededor del {focused.pct.toFixed(1)} % · tramo de {unit(focused.segmentMeters,' m')} · {reference?'A vs. B':'vuelta individual'}</p></div></div><strong className={focused.delta>0.035?'trace-loss':focused.delta<-.035?'trace-gain':''}>{Number.isFinite(focused.delta)?signedTime(focused.delta):'—'}</strong></div>
-        <p className="v081-reference-note">{reference?`A = vuelta que estás estudiando. B = tu vuelta ${reference.lapNumber} (${reference.car}, ${reference.time.toFixed(3)} s). Las diferencias se calculan contra ella.`:'Solo se analiza tu vuelta; no existe una referencia adicional.'}</p>
+        <p className="v081-reference-note">{reference?`A = vuelta que estás estudiando. B = la vuelta seleccionada ${reference.lapNumber} (${reference.car}, ${reference.time.toFixed(3)} s). Las diferencias se calculan contra ella.`:'Solo se analiza tu vuelta; no existe una referencia adicional.'}</p>
         <div className="c07-metric-grid v081-core-metrics">
           <CornerKpi label="Velocidad mínima en esta zona" value={unit(focused.minSpeed,' km/h')} reference={focused.reference?unit(focused.reference.minSpeed,' km/h'):null} subtitle={Number.isFinite(focused.speedDifference)?`A − B: ${difference(focused.speedDifference,' km/h',1)}`:null}/>
           <CornerKpi label="Pico de freno detectado" value={focused.brake?unit(focused.brake.peakBrake,' %',1):'No detectado'} reference={focused.reference?.brake?unit(focused.reference.brake.peakBrake,' %',1):null}/>

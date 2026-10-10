@@ -88,52 +88,72 @@ export const parse=(value,track)=>{
      corners.some((c,i)=>i>0 && c.distance<=corners[i-1].distance))return null;
   return {source:'RaceHooks — anotaciones comunitarias (MIT; orientativas)',length:max,turns:corners};
 };
-async function reviewedAnnotations(key,slug){
-  // The maintainer may publish checked pin locations together with Vercel.
-  // These locations are manually annotated, not official FIA measurements.
-  try{
-    const data=await timeoutFetch(`/data/corners-reviewed/${slug}.json`);
-    if(data?.schema!=='apextrace-turns-v1'||circuitId(data.track)!==key||!Array.isArray(data.turns))return null;
-    const count=guideFor(key).count;
-    if(data.turns.length<1||data.turns.length>count)return null;
-    const seen=new Set(),turns=[];
-    for(const t of data.turns){
-      if(!Number.isInteger(t.number)||t.number<1||t.number>count||seen.has(t.number)||
-        !Number.isFinite(t.x)||!Number.isFinite(t.y)||t.x<0||t.x>640||t.y<0||t.y>430)return null;
-      seen.add(t.number);
-      turns.push({number:t.number,mapPosition:{x:t.x,y:t.y},origin:'reviewed',approximate:true});
-    }
-    return {source:'Posiciones revisadas manualmente para ApexTrace (no FIA)',length:null,turns,
-      warning:turns.length<count?`Hay ${turns.length} curvas ubicadas de ${count}. Completa las restantes con el editor del mapa.`:null};
-  }catch{return null;}
+/** Local 2025 circuit notes validated by the offline installer.
+ * If missing, try the circuit API once; when unavailable the UI can estimate
+ * direction changes from a complete recorded X/Z lap (with a clear disclaimer).
+ */
+export function parseAutomaticGuide(value,track){
+  const key=circuitId(track),count=guideFor(key).count;
+  if(value?.schema!=='apextrace-corner-distances-v1'||circuitId(value.track)!==key||
+     value.year!==2025||!Array.isArray(value.turns)||value.turns.length!==count||
+     !Number.isFinite(value.length)||value.length<1000)return null;
+  const turns=[];
+  for(const [i,t] of value.turns.entries()){
+    if(t.number!==i+1||!Number.isFinite(t.distance)||t.distance<0||t.distance>=value.length||
+       (i>0&&t.distance<=turns[i-1].distance))return null;
+    turns.push({number:t.number,distance:t.distance,origin:'circuit-2025',approximate:true});
+  }
+  return {source:value.source||'Información de circuito 2025',length:value.length,turns};
+}
+function parseMultiviewer2025(value,track){
+  const count=guideFor(track).count;
+  if(!Array.isArray(value?.corners)||value.corners.length!==count)return null;
+  const length=track==='bahrain'?5412:null;
+  if(!length)return null;
+  const turns=[];
+  for(const [i,c] of value.corners.entries()){
+    const distance=Number(c?.length)/10;
+    if(Number(c?.number)!==i+1||!Number.isFinite(distance)||distance<0||distance>=length||
+      (i>0&&distance<=turns[i-1].distance))return null;
+    turns.push({number:i+1,distance,origin:'circuit-2025',approximate:true});
+  }
+  return {source:'Información de circuitos 2025 utilizada por FastF1 (distancias aproximadas)',length,turns};
 }
 export async function loadTurnAnnotations(track){
-  const key=circuitId(track);const slug=SLUGS[key]||key;
+  const key=circuitId(track); const slug=SLUGS[key]||key;
   if(!key)return null;
-  // Files added to public/data/corners-reviewed are loaded before external sources.
-  // In the live web they allow everyone to see the same edited pins.
-  // (No personal telemetry is ever published.)
-  if(key==='monza')return Promise.resolve(reviewedAnnotations(key,slug).then(v=>v||MONZA_REFERENCE));
-  // This source is known to describe a 20-turn Bahrain variant/miscount.
-  // Do not retry three identical invalid providers on every visit.
-  if(key==='bahrain')return Promise.resolve(reviewedAnnotations(key,slug).then(v=>v||({source:'Bahréin GP: 15 curvas (FIA)',length:null,turns:[],warning:
-    'La anotación descargada enumera 20 curvas y no corresponde a las 15 del trazado de GP. Se ha desactivado para evitar ubicaciones falsas. Puedes ajustar las curvas en el mapa consultando el plano oficial.'})));
   if(promises.has(key))return promises.get(key);
   const task=(async()=>{
-    const curated=await reviewedAnnotations(key,slug);if(curated)return curated;
-    try{const cached=localStorage.getItem(CACHE_PREFIX+key);if(cached){const data=parse(JSON.parse(cached),track);if(data)return data;}}catch{/* private browser */}
+    if(key==='bahrain'){
+      try{
+        const local=parseAutomaticGuide(await timeoutFetch('/data/corners-auto/bahrain.json'),key);
+        if(local)return local;
+      }catch{/* No optional file yet. */}
+      // Some browsers disallow cross-origin reads here; installer remains the
+      // recommended predictable option for a locally hosted/public website.
+      try{
+        const live=parseMultiviewer2025(await timeoutFetch('https://api.multiviewer.app/api/v1/circuits/63/2025'),key);
+        if(live)return live;
+      }catch{/* The lap-derived estimator can take over. */}
+      return {source:'Bahréin GP — 15 curvas',length:null,turns:[],warning:
+        'La antigua fuente de 20 curvas es incompatible. Si hay una vuelta con posiciones X/Z completas se intentará una estimación automática. Para ubicaciones de referencia, ejecuta Instalar_Mapas_Offline.bat.'};
+    }
+    if(key==='monza')return MONZA_REFERENCE;
+    try{
+      const cached=localStorage.getItem(CACHE_PREFIX+key);
+      if(cached){const v=parse(JSON.parse(cached),track);if(v)return v;}
+    }catch{/* Storage optional. */}
     const urls=[`/data/corners/${slug}.json`,
       `https://raw.githubusercontent.com/racehooks/racehooks-corner-map/main/data/circuits/${slug}.json`,
       `https://cdn.jsdelivr.net/gh/racehooks/racehooks-corner-map@main/data/circuits/${slug}.json`];
-    for(const url of urls){try{const json=await timeoutFetch(url),parsed=parse(json,track);if(!parsed)continue;
-      try{localStorage.setItem(CACHE_PREFIX+key,JSON.stringify(json));}catch{/* optional */}
+    for(const url of urls){try{
+      const json=await timeoutFetch(url),parsed=parse(json,track);
+      if(!parsed)continue;
+      try{localStorage.setItem(CACHE_PREFIX+key,JSON.stringify(json));}catch{}
       return parsed;
-    }catch{/* try another provider */}}
-    // Fail closed: preserve the numbered directory, but no pins or corner coaching
-    // if the available source is for a different track variant or is inconsistent.
-    return {source:'Anotaciones no validadas',length:null,turns:[],warning:
-      key==='bahrain'?'La fuente disponible enumera 20 curvas; Bahréin GP tiene 15. Se descartaron ubicaciones erróneas. Puedes ubicar manualmente las 15 curvas sobre el mapa.':
-      'Las posiciones disponibles están incompletas o no coinciden con la numeración de este circuito.'};
+    }catch{}}
+    return {source:'Sin ubicaciones comunitarias compatibles',length:null,turns:[],warning:
+      'No se encontraron anotaciones verificables. ApexTrace puede estimar posiciones a partir de una vuelta completa con X/Z; no equivalen a un mapa oficial.'};
   })();
   promises.set(key,task);return task;
 }
@@ -141,7 +161,7 @@ export function numberedTurns(track,annotations){
   const {count}=guideFor(track);
   const known=new Map(annotations?.turns?.map(t=>[t.number,t])||[]);
   return Array.from({length:count},(_,i)=>({number:i+1,label:`T${i+1}`,...(known.get(i+1)||{}),
-    pct:Number.isFinite(known.get(i+1)?.distance)&&Number.isFinite(annotations?.length)&&annotations.length>0 ? 100*known.get(i+1).distance/annotations.length : null}));
+    pct:Number.isFinite(known.get(i+1)?.pct) ? known.get(i+1).pct : Number.isFinite(known.get(i+1)?.distance)&&Number.isFinite(annotations?.length)&&annotations.length>0 ? 100*known.get(i+1).distance/annotations.length : null}));
 }
 export function lapTurnStats(lap,turn){
   if(!lap?.points?.length||!Number.isFinite(turn?.pct))return null;

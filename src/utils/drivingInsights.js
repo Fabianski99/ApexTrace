@@ -1,3 +1,4 @@
+import { circuitId } from './circuits';
 /** ApexTrace v0.8 — math over existing F1 25 samples, not synthetic telemetry.
  * This module is pure, called when selected laps or turns change, never per frame.
  * Percentage samples represent distance, not equal durations.
@@ -31,7 +32,7 @@ export function percentAtSeconds(lap, t) {
 
 /** Delta is A minus B: positive means A loses time during this specific span. */
 export function buildDeltaSections(a,b, count=24) {
-  if(!a?.points || !b?.points || a.track!==b.track || a.car!==b.car)return [];
+  if(!a?.points || !b?.points || a.game!=='F1 25' || b.game!=='F1 25' || circuitId(a.track)!==circuitId(b.track))return [];
   return Array.from({length:count},(_,i)=>{
     const start=100*i/count, end=100*(i+1)/count;
     const aa=sampleAt(a,start),ab=sampleAt(a,end),ba=sampleAt(b,start),bb=sampleAt(b,end);
@@ -44,8 +45,8 @@ export function buildDeltaSections(a,b, count=24) {
 /** Best observed non-overlapping minisector per valid lap.
  * The result is a theoretical floor, not a drivably achievable lap time.
  */
-export function theoreticalIdeal(laps, track, car, count=20) {
-  const compatible=laps.filter(l=>l.game==='F1 25' && l.verified && l.valid!==false && l.track===track && l.car===car && l.points?.length>=100 && good(l.time) && l.time>0);
+export function theoreticalIdeal(laps, track, count=20) {
+  const compatible=laps.filter(l=>l.game==='F1 25' && l.verified && l.valid!==false && circuitId(l.track)===circuitId(track) && l.points?.length>=100 && good(l.time) && l.time>0);
   if(compatible.length<2)return null;
   const baseDistance=compatible[0].distance;
   const eligible=compatible.filter(l=>good(l.distance)&&good(baseDistance)&&Math.abs(l.distance-baseDistance)/baseDistance<.03);
@@ -78,7 +79,7 @@ export function markersForTurn(lap, turnItem) {
 /** Small, actionable and cautious UI copy. Never asserts that a later brake is intrinsically better. */
 export function simpleCornerAdvice(item) {
   if(!item)return {tone:'neutral',headline:'Elige una curva',explanation:'Selecciona una curva para estudiar frenada, paso y salida.',action:'Los datos detallados estarán debajo.'};
-  if(!item.reference||!good(item.delta))return {tone:'neutral',headline:`Estudia ${item.label} en tu vuelta`,explanation:'Los marcadores muestran lo que registró tu coche, sin compararlo con otro piloto.',action:'Selecciona una segunda vuelta propia para descubrir diferencias.'};
+  if(!item.reference||!good(item.delta))return {tone:'neutral',headline:`Estudia ${item.label} en tu vuelta`,explanation:'Los marcadores muestran lo que registró tu coche, sin compararlo con otro piloto.',action:'Selecciona otra vuelta del mismo circuito para descubrir diferencias.'};
   if(item.delta>.055){
     if(good(item.brakingDifferenceM)&&item.brakingDifferenceM < -9)return {tone:'loss',headline:`Pierdes ${item.delta.toFixed(3)} s en ${item.label}`,explanation:`Frenaste unos ${Math.round(-item.brakingDifferenceM)} m antes que en tu otra vuelta. Eso puede explicar parte de la diferencia, pero no confirma que debas frenar más tarde.`,action:'Revisa la velocidad de entrada y sobre todo la salida antes de experimentar con la frenada.'};
     if(good(item.brakingDifferenceM)&&item.brakingDifferenceM > 9 && good(item.speedDifference) && item.speedDifference < -5)return {tone:'loss',headline:`Pierdes ${item.delta.toFixed(3)} s en ${item.label}`,explanation:'Frenaste después, pero la velocidad mínima fue más baja. La entrada podría estar perjudicando el paso por curva.',action:'Compara cuándo empiezas a soltar el freno y cuándo puedes acelerar de nuevo.'};

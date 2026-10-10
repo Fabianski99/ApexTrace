@@ -1,3 +1,4 @@
+import { circuitId } from './circuits';
 /**
  * ApexTrace v0.7 — análisis descriptivo F1 25.
  * Las coordenadas T proceden de anotaciones aproximadas y los laps guardan
@@ -132,10 +133,10 @@ export function analyzeTurns(lap, turns) {
   return turns.map(t=>analyzeTurn(lap,t,turns,assigned)).filter(Boolean);
 }
 
-/** Same track/car only. Comparisons measured in identical approximate distance windows. */
+/** Same circuit, with any F1 25 team. Comparison windows are approximate. */
 export function compareTurnSamples(current, reference, turns) {
   const original=analyzeTurns(current,turns);
-  if(!reference || current?.id===reference.id || current?.track!==reference.track || current?.car!==reference.car){
+  if(!reference || current?.id===reference.id || current?.game!=='F1 25' || reference?.game!=='F1 25' || circuitId(current?.track)!==circuitId(reference?.track)){
     return original.map(item=>({...item,reference:null,delta:null}));
   }
   const refByTurn=new Map(analyzeTurns(reference,turns).map(t=>[t.number,t]));
@@ -153,7 +154,7 @@ export function adviceForTurn(item) {
   if(!item)return [];
   const notes=[];
   if(!item.reference || !finite(item.delta)){
-    notes.push('Se muestran datos de una sola vuelta. Selecciona otra vuelta válida del mismo coche y circuito para detectar diferencias.');
+    notes.push('Se muestran datos de una sola vuelta. Selecciona otra vuelta válida del mismo circuito (cualquier equipo) para detectar diferencias.');
   }else if(item.delta>=0.05){
     notes.push(`En este tramo pierdes aproximadamente ${item.delta.toFixed(3)} s respecto a tu referencia propia.`);
     if(finite(item.brakingDifferenceM)&&item.brakingDifferenceM < -12){

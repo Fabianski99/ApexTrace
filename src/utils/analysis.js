@@ -1,3 +1,4 @@
+import { circuitId } from './circuits';
 export const timeLabel = (seconds, digits = 3) => {
   if (!Number.isFinite(seconds)) return '—';
   const s = Math.max(0, seconds);
@@ -5,7 +6,15 @@ export const timeLabel = (seconds, digits = 3) => {
 };
 export const signedTime = seconds => `${seconds > 0 ? '+' : ''}${Number(seconds || 0).toFixed(3)} s`;
 export const shortDate = date => new Date(date).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' });
-export const sameCarTrack = (a, b) => !!(a && b && a.id !== b.id && a.game === 'F1 25' && b.game === 'F1 25' && a.track === b.track && a.car === b.car);
+/** Two different F1 25 laps of the same circuit; team/car is NOT a restriction.
+ * Track aliases are normalized. The website cannot certify equal-performance settings.
+ */
+export const sameCircuitLaps = (a, b) => !!(
+  a && b && a.id !== b.id && a.game === 'F1 25' && b.game === 'F1 25' &&
+  circuitId(a.track) === circuitId(b.track) &&
+  Array.isArray(a.points) && a.points.length >= 2 &&
+  Array.isArray(b.points) && b.points.length >= 2
+);
 const nearest = (points, pct) => points[Math.min(points.length - 1, Math.max(0, Math.round(pct / 100 * (points.length - 1))))];
 
 /** Only detect braking/low-speed zones. Labels aren't official circuit turn numbers. */
@@ -41,7 +50,7 @@ export function findCornerZones(points, track = '') {
 }
 
 export function makeComparison(a, b) {
-  if (!sameCarTrack(a, b)) return null;
+  if (!sameCircuitLaps(a, b)) return null;
   const size = Math.min(a.points.length, b.points.length);
   const data = [];
   for (let i = 0; i < size; i++) {
