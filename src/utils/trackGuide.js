@@ -43,6 +43,13 @@ const SLUGS={melbourne:'melbourne',catalunya:'barcelona',hungaroring:'budapest',
 // dirección/velocidad de las vueltas de Monza incluidas en el proyecto;
 // la numeración y los nombres siguen el mapa FIA/F1 2025.
 // No son distancias FIA oficiales ni datos del Recorder de otra persona.
+// Circuit metadata available through MultiViewer, also consumed by FastF1.
+// API corner distances are approximate and intended for visualization.
+// Add more circuits here only after their 2025 circuit keys have been confirmed.
+const AUTO_2025 = {
+  bahrain: { circuitKey:63, count:15, length:5412 },
+  baku: { circuitKey:144, count:20, length:6003 },
+};
 const MONZA_REFERENCE = {
   source: 'ApexTrace: estimación local de Monza (11 curvas; posiciones orientativas)',
   length: 5793,
@@ -106,10 +113,9 @@ export function parseAutomaticGuide(value,track){
   return {source:value.source||'Información de circuito 2025',length:value.length,turns};
 }
 function parseMultiviewer2025(value,track){
-  const count=guideFor(track).count;
-  if(!Array.isArray(value?.corners)||value.corners.length!==count)return null;
-  const length=track==='bahrain'?5412:null;
-  if(!length)return null;
+  const key=circuitId(track),config=AUTO_2025[key];
+  if(!config||!Array.isArray(value?.corners)||value.corners.length!==config.count)return null;
+  const {length}=config;
   const turns=[];
   for(const [i,c] of value.corners.entries()){
     const distance=Number(c?.length)/10;
@@ -117,26 +123,36 @@ function parseMultiviewer2025(value,track){
       (i>0&&distance<=turns[i-1].distance))return null;
     turns.push({number:i+1,distance,origin:'circuit-2025',approximate:true});
   }
-  return {source:'Información de circuitos 2025 utilizada por FastF1 (distancias aproximadas)',length,turns};
+  return {source:'MultiViewer 2025 / FastF1 (distancias aproximadas, no oficiales)',length,turns};
 }
 export async function loadTurnAnnotations(track){
   const key=circuitId(track); const slug=SLUGS[key]||key;
   if(!key)return null;
   if(promises.has(key))return promises.get(key);
   const task=(async()=>{
-    if(key==='bahrain'){
+    if(AUTO_2025[key]){
+      const {circuitKey,count}=AUTO_2025[key];
+      // First load the small file downloaded by the offline installer; it also
+      // works in published builds when public/data is committed to GitHub.
       try{
-        const local=parseAutomaticGuide(await timeoutFetch('/data/corners-auto/bahrain.json'),key);
+        const local=parseAutomaticGuide(await timeoutFetch(`/data/corners-auto/${key}.json`),key);
         if(local)return local;
-      }catch{/* No optional file yet. */}
-      // Some browsers disallow cross-origin reads here; installer remains the
-      // recommended predictable option for a locally hosted/public website.
+      }catch{/* Optional: not installed yet. */}
+      // Best effort browser fallback. MultiViewer may not authorize a browser
+      // origin (CORS); in that case installing locally is the reliable route.
       try{
-        const live=parseMultiviewer2025(await timeoutFetch('https://api.multiviewer.app/api/v1/circuits/63/2025'),key);
+        const live=parseMultiviewer2025(await timeoutFetch(`https://api.multiviewer.app/api/v1/circuits/${circuitKey}/2025`),key);
         if(live)return live;
-      }catch{/* The lap-derived estimator can take over. */}
-      return {source:'Bahréin GP — 15 curvas',length:null,turns:[],warning:
-        'La antigua fuente de 20 curvas es incompatible. Si hay una vuelta con posiciones X/Z completas se intentará una estimación automática. Para ubicaciones de referencia, ejecuta Instalar_Mapas_Offline.bat.'};
+      }catch{/* Cross-origin reads can fail; continue safely. */}
+      // A compatible community guide is preferable to omitting all locations.
+      // Reject mismatched turn counts, order, track variants, or bad distances.
+      const slug=SLUGS[key]||key;
+      for(const url of [`/data/corners/${slug}.json`,
+        `https://raw.githubusercontent.com/racehooks/racehooks-corner-map/main/data/circuits/${slug}.json`]){
+        try{const community=parse(await timeoutFetch(url),key);if(community)return community;}catch{}
+      }
+      return {source:`${key} — ${count} curvas del trazado GP`,length:null,turns:[],warning:
+        `No hay posiciones compatibles para ${key}. Ejecuta tools/Instalar_Mapas_Offline.bat con Internet (fuente 2025: ${count} curvas). Se puede intentar una estimación por X/Z si tienes una vuelta completa; sus resultados no son una guía fiable de frenada.`};
     }
     if(key==='monza')return MONZA_REFERENCE;
     try{

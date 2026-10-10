@@ -1,7 +1,7 @@
 @echo off
 cd /d "%~dp0.."
 echo ======================================================
-echo APEXTRACE v0.8.5 - Referencias de curvas automaticas
+echo APEXTRACE v0.8.6 - Referencias de curvas F1 2025
  echo ======================================================
 if exist "public\data\f1-circuits.geojson" (
  echo [OK] Atlas de circuitos ya instalado. No es necesario descargarlo otra vez.
