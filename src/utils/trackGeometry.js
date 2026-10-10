@@ -101,3 +101,26 @@ export function pointAtPct(track,registration,pct){
   const u=registration.phase+registration.direction*clamp(pct,0,100)/100;
   return interpolate(track.points,u*track.points.length);
 }
+
+/** Position of a calibrated atlas turn within this specific recorded lap.
+ * A map XY marker does NOT have a reliable lap percentage on its own: the
+ * GeoJSON ring can begin at any arbitrary point and run in either direction.
+ */
+export function lapPercentAtMapPosition(track, registration, mapPosition) {
+  if (!track?.points?.length || !registration ||
+      !Number.isFinite(mapPosition?.x) || !Number.isFinite(mapPosition?.y)) return null;
+  let best = Infinity;
+  let index = -1;
+  for (let i = 0; i < track.points.length; i++) {
+    const a = track.points[i], b = track.points[(i + 1) % track.points.length];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const t = Math.max(0, Math.min(1, ((mapPosition.x - a.x)*dx + (mapPosition.y - a.y)*dy) / (dx*dx + dy*dy || 1)));
+    const x = a.x + dx*t, y = a.y + dy*t;
+    const d = (x - mapPosition.x)**2 + (y - mapPosition.y)**2;
+    if (d < best) { best = d; index = i+t; }
+  }
+  if (index < 0 || best > 100) return null; // Marker must be genuinely close to reference geometry.
+  const ringFraction = index / track.points.length;
+  const lapFraction = (registration.direction*(ringFraction - registration.phase) % 1 + 1) % 1;
+  return lapFraction * 100;
+}

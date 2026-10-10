@@ -1,0 +1,187 @@
+{
+  "schema": "apextrace-corners-calibrated-v2",
+  "year": 2025,
+  "track": "mexico",
+  "source": "MultiViewer 2025 / OpenF1 (aproximado; recorrido GP 2025 validado)",
+  "circuitKey": 65,
+  "count": 17,
+  "status": "ready",
+  "calibration": {
+    "rmsMeters": 21.71,
+    "relativeError": 0.0122,
+    "algorithm": "ordered-projection-v2",
+    "sourceYear": 2025
+  },
+  "turns": [
+    {
+      "number": 1,
+      "mapPosition": {
+        "x": 525.26,
+        "y": 92.694
+      },
+      "trackFraction": 0.253906,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 2,
+      "mapPosition": {
+        "x": 543.161,
+        "y": 125.197
+      },
+      "trackFraction": 0.287764,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 3,
+      "mapPosition": {
+        "x": 556.707,
+        "y": 139.846
+      },
+      "trackFraction": 0.303556,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 4,
+      "mapPosition": {
+        "x": 452.939,
+        "y": 332.467
+      },
+      "trackFraction": 0.459467,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 5,
+      "mapPosition": {
+        "x": 462.641,
+        "y": 347.674
+      },
+      "trackFraction": 0.474503,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 6,
+      "mapPosition": {
+        "x": 426.842,
+        "y": 367.422
+      },
+      "trackFraction": 0.525037,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 7,
+      "mapPosition": {
+        "x": 434.701,
+        "y": 266.337
+      },
+      "trackFraction": 0.59799,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 8,
+      "mapPosition": {
+        "x": 407.285,
+        "y": 242.568
+      },
+      "trackFraction": 0.62416,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 9,
+      "mapPosition": {
+        "x": 394.711,
+        "y": 223.63
+      },
+      "trackFraction": 0.640625,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 10,
+      "mapPosition": {
+        "x": 337.971,
+        "y": 210.925
+      },
+      "trackFraction": 0.682144,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 11,
+      "mapPosition": {
+        "x": 322.231,
+        "y": 180.64
+      },
+      "trackFraction": 0.706927,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 12,
+      "mapPosition": {
+        "x": 157.856,
+        "y": 136.732
+      },
+      "trackFraction": 0.828765,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 13,
+      "mapPosition": {
+        "x": 141.223,
+        "y": 80.571
+      },
+      "trackFraction": 0.875,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 14,
+      "mapPosition": {
+        "x": 126.429,
+        "y": 84.751
+      },
+      "trackFraction": 0.890014,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 15,
+      "mapPosition": {
+        "x": 115.409,
+        "y": 85.852
+      },
+      "trackFraction": 0.898681,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 16,
+      "mapPosition": {
+        "x": 97.108,
+        "y": 81.578
+      },
+      "trackFraction": 0.912099,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 17,
+      "mapPosition": {
+        "x": 131.237,
+        "y": 39.02
+      },
+      "trackFraction": 0.972656,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    }
+  ]
+}

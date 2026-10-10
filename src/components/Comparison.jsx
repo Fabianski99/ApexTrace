@@ -7,7 +7,8 @@ import AdvancedCornerAnalysis from './AdvancedCornerAnalysis';
 import { CornerCoach, ComparisonOverview, MapDrivingKey } from './DrivingCoach';
 import { buildDeltaSections, markersForTurn, theoreticalIdeal } from '../utils/drivingInsights';
 import { guideFor, loadTurnAnnotations, numberedTurns } from '../utils/trackGuide';
-import { inferTurnsFromLap } from '../utils/automaticTurns';
+import { getCircuit, loadCircuitAtlas } from '../utils/circuits';
+import { prepareTrack, alignLapToTrack, lapPercentAtMapPosition } from '../utils/trackGeometry';
 import { compareTurnSamples } from '../utils/cornerAnalysis';
 import { makeComparison, sameCircuitLaps, signedTime, timeLabel } from '../utils/analysis';
 import { circuitId } from '../utils/circuits';
@@ -32,13 +33,18 @@ export default function Comparison({ laps, idA, idB, setIdA, setIdB, targetTrack
     loadTurnAnnotations(a.track).then(v=>{if(active)setTurnAnnotations(v);}).catch(()=>{});
     return()=>{active=false;};
   },[compatible,a?.track]);
-  const automaticGuide=useMemo(()=>compatible&&a?inferTurnsFromLap(a,guideFor(a.track).count):null,[compatible,a]);
+  const [atlas,setAtlas]=useState(null);
+  useEffect(()=>{let live=true;loadCircuitAtlas().then(v=>{if(live)setAtlas(v)}).catch(()=>{});return()=>{live=false}},[]);
+  const shape=useMemo(()=>a&&atlas?prepareTrack(atlas[getCircuit(a.track)?.id]):null,[a?.track,atlas]);
+  const alignment=useMemo(()=>alignLapToTrack(shape,a),[shape,a]);
   const advancedTurns=useMemo(()=>{
     if(!compatible)return [];
-    const reliable=turnAnnotations?.turns?.length===guideFor(a.track).count;
-    return numberedTurns(a.track,reliable?turnAnnotations:(automaticGuide||turnAnnotations));
-  },[compatible,a?.track,turnAnnotations,automaticGuide]);
-  const estimatedCorners=Boolean(automaticGuide&&turnAnnotations?.turns?.length!==guideFor(a?.track).count);
+    return numberedTurns(a.track,turnAnnotations).map(turn=>{
+      const pct=turn.mapPosition?lapPercentAtMapPosition(shape,alignment,turn.mapPosition):turn.pct;
+      return {...turn,pct:Number.isFinite(pct)?pct:null};
+    });
+  },[compatible,a?.track,turnAnnotations,shape,alignment]);
+  const estimatedCorners=false;
   const advancedItems=useMemo(()=>compatible&&!estimatedCorners?compareTurnSamples(a,b,advancedTurns):[],[compatible,a,b,advancedTurns,estimatedCorners]);
   const sectionsV08=useMemo(()=>compatible?buildDeltaSections(a,b):[],[compatible,a,b]);
   const ideal=useMemo(()=>a?theoreticalIdeal(laps,a.track):null,[laps,a?.track]);

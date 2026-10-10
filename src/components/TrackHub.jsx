@@ -2,8 +2,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronRight, Clock3, Flag, Gauge, MapPinned, Search, Target, WifiOff, Play, Pause, RotateCcw, Timer } from 'lucide-react';
 import TrackMap from './TrackMap';
 import { CIRCUITS, circuitId, loadCircuitAtlas, getCircuit } from '../utils/circuits';
-import { prepareTrack, alignLapToTrack } from '../utils/trackGeometry';
-import { inferTurnsFromLap } from '../utils/automaticTurns';
+import { prepareTrack, alignLapToTrack, lapPercentAtMapPosition } from '../utils/trackGeometry';
 import { shortDate, timeLabel } from '../utils/analysis';
 import { detectBrakingEvents, compareTurnSamples } from '../utils/cornerAnalysis';
 import AdvancedCornerAnalysis from './AdvancedCornerAnalysis';
@@ -42,7 +41,7 @@ const TurnList = memo(function TurnList({turns,chosen,onSelect,statsByTurn}){
       const stats=statsByTurn.get(t.number),active=t.number===chosen;
       return <button key={t.number} className={`hub-turn-row ${active?'active':''}`} onClick={()=>onSelect(t)} role="listitem">
         <span className="hub-turn-number">{t.label}</span>
-        <span className="hub-turn-row-copy"><b>{t.name||`Curva ${t.number}`}</b><small>{t.pct!=null?`≈ ${t.pct.toFixed(1)}% · ${t.origin==='automatic-estimate'?'estimación por trayectoria':t.origin==='circuit-2025'?'referencia de 2025':t.origin==='apextrace'?'estimación local':'dato comunitario'}`:'Ubicación pendiente: registra una vuelta con X/Z'}</small></span>
+        <span className="hub-turn-row-copy"><b>{t.name||`Curva ${t.number}`}</b><small>{t.pct!=null?`≈ ${t.pct.toFixed(1)}% · ${t.origin==='automatic-estimate'?'estimación por trayectoria':t.origin==='circuit-2025'?'referencia de 2025':t.origin==='apextrace'?'estimación local':'dato comunitario'}`:t.mapPosition?'Marcador en mapa · selecciona una vuelta para analizar':'Ubicación pendiente de calibración'}</small></span>
         {stats&&<span className="hub-turn-speed">{stats.minSpeed}<small>km/h mín.</small></span>}
         <ChevronRight size={15}/>
       </button>;
@@ -77,7 +76,7 @@ const LapInsights = memo(function LapInsights({lap,all,track,goCompare}){
 export default function TrackHub({laps,onCompare}){
   const [filter,setFilter]=useState(''),[region,setRegion]=useState('Todos'),[activeId,setActiveId]=useState(''),[lapId,setLapId]=useState(''),[turnNumber,setTurnNumber]=useState(1),[tab,setTab]=useState('curves'),[referenceId,setReferenceId]=useState('');
   const [atlas,setAtlas]=useState(null),[mapError,setMapError]=useState(false);
-  const [annotations,setAnnotations]=useState(null),[annotationsPending,setAnnotationsPending]=useState(false);
+  const [annotations,setAnnotations]=useState(null),[annotationsPending,setAnnotationsPending]=useState(false),[annotationRefresh,setAnnotationRefresh]=useState(0);
   
   useEffect(()=>{let live=true;loadCircuitAtlas().then(value=>{if(live)setAtlas(value);}).catch(()=>{if(live)setMapError(true);});return()=>{live=false;};},[]);
   const previews=useMemo(()=>atlas?Object.fromEntries(CIRCUITS.map(c=>[c.id,prepareTrack(atlas[c.id])])):{},[atlas]);
@@ -98,21 +97,22 @@ export default function TrackHub({laps,onCompare}){
   useEffect(()=>{
     if(!activeId){setAnnotations(null);return;}
     let mounted=true;setAnnotations(null);setAnnotationsPending(true);
-    loadTurnAnnotations(activeId).then(value=>{if(mounted)setAnnotations(value);}).finally(()=>{if(mounted)setAnnotationsPending(false);});
+    loadTurnAnnotations(activeId,{refresh:annotationRefresh>0}).then(value=>{if(mounted)setAnnotations(value);}).catch(error=>{if(mounted)setAnnotations({turns:[],warning:`Error al cargar las curvas: ${error.message}`});}).finally(()=>{if(mounted)setAnnotationsPending(false);});
     return()=>{mounted=false;};
-  },[activeId]);
+  },[activeId,annotationRefresh]);
   const shape=active?previews[active.id]:null;
   const alignment=useMemo(()=>alignLapToTrack(shape,lap),[shape,lap]);
-  const automaticGuide=useMemo(()=>active&&lap?
-    inferTurnsFromLap(lap,guideFor(active.id).count):null,[active?.id,lap]);
+  // Locations come from the geometry-calibrated atlas, not assumed percentages.
   const turns=useMemo(()=>{
     if(!active)return [];
-    const hasTrustedLocations=annotations?.turns?.length===guideFor(active.id).count;
-    // Source priority: compatible 2025 / Monza / community corners, then a
-    // clearly labelled estimation from this lap (never a manual placement).
-    return numberedTurns(active.id,hasTrustedLocations?annotations:(automaticGuide||annotations));
-  },[active?.id,annotations,automaticGuide]);
-  const estimatesUsed=Boolean(automaticGuide&&annotations?.turns?.length!==guideFor(active?.id).count);
+    return numberedTurns(active.id,annotations).map(turn=>{
+      const pct=turn.mapPosition
+        ?lapPercentAtMapPosition(shape,alignment,turn.mapPosition)
+        :turn.pct;
+      return {...turn,pct:Number.isFinite(pct)?pct:null};
+    });
+  },[active?.id,annotations,shape,alignment]);
+  const estimatesUsed=Boolean(annotations?.turns?.some(t=>t.origin==='automatic-estimate'));
   const selectedTurn=turns.find(t=>t.number===turnNumber)||turns[0];
   // v0.7: detect events from the brake channel, independently of speed minima.
   const brakingEvents=useMemo(()=>lap?detectBrakingEvents(lap):[],[lap]);
@@ -161,7 +161,8 @@ export default function TrackHub({laps,onCompare}){
         <div className="hub-note hub-map-accuracy"><CheckCircle2 size={18}/><p>Las curvas se ubican automáticamente usando datos compatibles del circuito o, si faltan, una estimación por tu trayectoria X/Z. Los puntos estimados pueden diferir de las curvas oficiales; verifica antes de usarlos como referencias de frenada.</p></div>
       </div>
       <section className="trace-card hub-data-panel"><div className="hub-tab-bar" role="tablist" aria-label="Explorar circuito"><button role="tab" aria-selected={tab==='curves'} className={tab==='curves'?'active':''} onClick={()=>setTab('curves')}>Curvas</button><button role="tab" aria-selected={tab==='braking'} className={tab==='braking'?'active':''} onClick={()=>setTab('braking')}>Frenadas</button><button role="tab" aria-selected={tab==='performance'} className={tab==='performance'?'active':''} onClick={()=>setTab('performance')}>Rendimiento</button><button role="tab" aria-selected={tab==='analysis'} className={tab==='analysis'?'active':''} onClick={()=>setTab('analysis')}>Analizar conducción</button></div>
-        {tab==='curves'&&<><div className="hub-data-intro"><span className="trace-overline">CORNER DIRECTORY</span><h2>Guía de curvas</h2><p>{annotationsPending?'Comprobando anotaciones de curvas…':estimatesUsed?automaticGuide.warning:annotations?.warning?annotations.warning:annotations?`${turns.filter(t=>t.pct!=null||t.mapPosition).length} ubicaciones automáticas. ${annotations.source||'Datos comunitarios'}.`:'Numeración disponible. Registra una vuelta para estimar posiciones.'}</p></div>
+        {tab==='curves'&&<><div className="hub-data-intro"><span className="trace-overline">CORNER DIRECTORY</span><h2>Guía de curvas</h2><p>{annotationsPending?'Comprobando anotaciones de curvas…':estimatesUsed?annotations?.warning:annotations?.warning?annotations.warning:annotations?`${turns.filter(t=>t.pct!=null||t.mapPosition).length} ubicaciones automáticas. ${annotations.source||'Datos comunitarios'}.`:'Numeración disponible. Registra una vuelta para estimar posiciones.'}</p></div>
+          {(annotations?.warning||!annotations?.turns?.length)&&!annotationsPending&&<div className="trace-corner-loader-notice" role="status"><p>{annotations?.warning||'Todavía no se han cargado posiciones de curvas para este circuito.'}</p><button type="button" className="trace-btn-ghost" onClick={()=>setAnnotationRefresh(v=>v+1)} disabled={annotationsPending}>Reintentar carga de curvas</button></div>}
           <div className="hub-curves-layout"><TurnList turns={turns} chosen={turnNumber} onSelect={pickTurn} statsByTurn={statsByTurn}/>
           <div className="hub-turn-focus"><span className="hub-focus-label">CURVA SELECCIONADA · {selectedTurn?.label}</span><strong>{selectedTurn?.name||`Curva ${selectedTurn?.number}`}</strong>
             <p>{Number.isFinite(selectedTurn?.pct)?

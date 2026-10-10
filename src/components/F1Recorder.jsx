@@ -6,8 +6,8 @@ import { timeLabel } from '../utils/analysis';
 export default function F1Recorder({onReceive,onHistory}){
  const hosted = !['localhost','127.0.0.1'].includes(window.location.hostname);
  const [localEnabled,setLocalEnabled]=useState(!hosted);
- const [status,setStatus]=useState(null),[online,setOnline]=useState(false),[syncing,setSyncing]=useState(false),[auto,setAuto]=useState(!hosted),[feedback,setFeedback]=useState(''),[dragging,setDragging]=useState(false),[importing,setImporting]=useState(false);
- const countRef=useRef(-1),lock=useRef(false);
+ const [status,setStatus]=useState(null),[online,setOnline]=useState(false),[syncing,setSyncing]=useState(false),[auto,setAuto]=useState(!hosted),[feedback,setFeedback]=useState(''),[importFeedback,setImportFeedback]=useState(''),[dragging,setDragging]=useState(false),[importing,setImporting]=useState(false);
+ const countRef=useRef(-1),lock=useRef(false),fileInputRef=useRef(null);
  const synchronize=useCallback(async (quiet=false)=>{
   if(lock.current)return;lock.current=true;setSyncing(true);
   try{const payload=await fetchRecorder('/api/laps');if(!Array.isArray(payload.laps))throw new Error('Respuesta inesperada del Recorder.');
@@ -19,13 +19,14 @@ export default function F1Recorder({onReceive,onHistory}){
  },[onReceive]);
  useEffect(()=>{if(!localEnabled){setOnline(false);setStatus(null);return;}let mounted=true;async function check(){try{const next=await fetchRecorder('/api/status');if(!mounted)return;setOnline(true);setStatus(next);if(auto&&next.savedLaps!==countRef.current&&!lock.current)await synchronize(true);}catch{if(mounted){setOnline(false);setStatus(null);}}}check();const interval=setInterval(check,5000);return ()=>{mounted=false;clearInterval(interval);};},[auto,synchronize,localEnabled]);
  async function importFiles(files){
-  setImporting(true);
+  if(importing)return;
+  setImporting(true);setImportFeedback('Leyendo archivos JSON…');
   try {
    const entries=await readSharedFiles(files);
-   if(!entries.length)return;
+   if(!entries.length){setImportFeedback('Selecciona al menos un archivo .json.');return;}
    const count=await onReceive(entries);
-   setFeedback(`${count} vuelta(s) nuevas importadas · ${entries.length-count} ya registradas. Ahora puedes analizarlas en Historial o Comparador.`);
-  } catch(e){setFeedback(`Importación: ${e.message}`)}
+   setImportFeedback(count?`${count} vuelta(s) importadas correctamente. ${entries.length-count} ya estaban guardadas.`:`Los ${entries.length} registros ya están en este navegador. No hay nuevas vueltas.`);
+  } catch(e){setImportFeedback(`No se pudo importar: ${e.message}`)}
   finally {setImporting(false);setDragging(false)}
  }
  async function importJSON(event){const files=Array.from(event.target.files||[]);event.target.value='';await importFiles(files)}
@@ -35,8 +36,9 @@ export default function F1Recorder({onReceive,onHistory}){
   <section className="trace-card trace-share-hero"><div className="trace-panel-head"><div><span className="trace-overline">SHARE YOUR LAP / SIN CUENTAS</span><h3>Importar telemetría JSON</h3><p>Para utilizar ApexTrace online no necesitas el Recorder: selecciona una vuelta o un paquete compartido.</p></div><UploadCloud size={23}/></div>
    <div className={`trace-dropzone ${dragging?'is-over':''}`} onDragOver={e=>{e.preventDefault();setDragging(true)}} onDragLeave={e=>{e.preventDefault();setDragging(false)}} onDrop={e=>{e.preventDefault();importFiles(e.dataTransfer.files)}}>
     <UploadCloud size={28}/><strong>Arrastra aquí tus archivos de F1 25</strong><span>Una vuelta .json o un paquete con varias · guardado solo en este navegador</span>
-    <label className="trace-file-btn"><FileJson2 size={16}/>{importing?'Importando...':'Seleccionar archivos JSON'}<input disabled={importing} type="file" accept=".json,application/json" multiple onChange={importJSON}/></label>
-   </div><div className="trace-sharing-benefits"><span><ShieldCheck size={15}/> Sin subir archivos a servidores</span><span><Link2 size={15}/> Compatible con JSON de tus amigos</span><span><Laptop size={15}/> Se guarda en este navegador</span></div>
+    <button type="button" className="trace-file-btn" disabled={importing} onClick={()=>fileInputRef.current?.click()}><FileJson2 size={16}/>{importing?'Importando...':'Seleccionar archivos JSON'}</button>
+    <input ref={fileInputRef} className="trace-native-file-input" type="file" accept=".json,application/json" multiple onChange={importJSON} aria-label="Seleccionar archivos de telemetría JSON"/>
+   </div>{importFeedback&&<div role="status" aria-live="polite" className="trace-import-feedback">{importFeedback}</div>}<div className="trace-sharing-benefits"><span><ShieldCheck size={15}/> Sin subir archivos a servidores</span><span><Link2 size={15}/> Compatible con JSON de tus amigos</span><span><Laptop size={15}/> Se guarda en este navegador</span></div>
   </section>
   <section className="trace-recorder-hero"><div className={`trace-radio-icon ${receiving?'live':''}`}><RadioTower size={31}/></div><div><span className="trace-overline">RECORDER CONNECTION</span><h2>{!localEnabled?'Captura local opcional':!online?'Recorder no disponible':wrong?'Formato UDP incompatible':receiving?'Telemetría en directo':'Recorder listo · esperando señal'}</h2><p>{!localEnabled?'Puedes analizar archivos sin conectarte. Para sincronizar desde tu PC, activa la conexión local a continuación.':!online?'Abre Iniciar_Recorder.bat. Si estás en Vercel, autoriza antes tu dominio en el Recorder y permite la conexión local en el navegador.':wrong?'Selecciona el formato UDP 2025 en F1 25.':receiving?'F1 25 está enviando paquetes UDP correctamente.':'La aplicación local responde. Cuando salgas a pista empezará a recibir paquetes.'}</p></div><span className={`trace-live-pill ${receiving?'online':''}`}><i/>{receiving?'LIVE':online?'IDLE':localEnabled?'OFFLINE':'OPCIONAL'}</span></section>
   <div className="trace-metric-grid"><div className="trace-metric"><span>PAQUETES UDP</span><strong>{(status?.packets??0).toLocaleString('es-CL')}</strong><small>{status?.udpFormat?`Formato ${status.udpFormat}`:'Esperando datos'}</small><Wifi className="trace-metric-icon" size={20}/></div><div className="trace-metric"><span>VUELTAS GUARDADAS</span><strong>{status?.savedLaps??'—'}</strong><small>Archivos JSON locales</small><FolderOpen className="trace-metric-icon" size={20}/></div><div className="trace-metric"><span>TIEMPO ACTUAL</span><strong>{status?.currentLapMs?timeLabel(status.currentLapMs/1000):'—'}</strong><small>Vuelta #{status?.currentLap??'—'}</small><Gauge className="trace-metric-icon" size={20}/></div><div className="trace-metric"><span>CIRCUITO / EQUIPO</span><strong className="trace-meta-stat">{status?.track||'—'}</strong><small>{status?.car||'Sin identificación'}</small><Activity className="trace-metric-icon" size={20}/></div></div>

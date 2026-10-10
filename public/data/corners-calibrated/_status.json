@@ -1,0 +1,153 @@
+{
+  "year": 2025,
+  "total": 24,
+  "ready": [
+    "melbourne",
+    "shanghai",
+    "suzuka",
+    "bahrain",
+    "jeddah",
+    "miami",
+    "imola",
+    "monaco",
+    "catalunya",
+    "montreal",
+    "spielberg",
+    "silverstone",
+    "spa",
+    "hungaroring",
+    "zandvoort",
+    "monza",
+    "baku",
+    "singapore",
+    "austin",
+    "mexico",
+    "interlagos",
+    "lasvegas",
+    "losail",
+    "abudhabi"
+  ],
+  "pending": [],
+  "details": {
+    "melbourne": {
+      "result": "retained",
+      "rmsMeters": 6.99,
+      "sourceYear": 2025
+    },
+    "shanghai": {
+      "result": "retained",
+      "rmsMeters": 3.39,
+      "sourceYear": 2025
+    },
+    "suzuka": {
+      "result": "retained",
+      "rmsMeters": 11.81,
+      "sourceYear": 2025
+    },
+    "bahrain": {
+      "result": "retained",
+      "rmsMeters": 14.01,
+      "sourceYear": 2025
+    },
+    "jeddah": {
+      "result": "retained",
+      "rmsMeters": 34.28,
+      "sourceYear": 2025
+    },
+    "miami": {
+      "result": "retained",
+      "rmsMeters": 9.13,
+      "sourceYear": 2025
+    },
+    "imola": {
+      "result": "retained",
+      "rmsMeters": 2.89,
+      "sourceYear": 2025
+    },
+    "monaco": {
+      "result": "retained",
+      "rmsMeters": 3.05,
+      "sourceYear": 2025
+    },
+    "catalunya": {
+      "result": "retained",
+      "rmsMeters": 2.61,
+      "sourceYear": 2025
+    },
+    "montreal": {
+      "result": "retained",
+      "rmsMeters": 6.95,
+      "sourceYear": 2025
+    },
+    "spielberg": {
+      "result": "retained",
+      "rmsMeters": 1.84,
+      "sourceYear": 2025
+    },
+    "silverstone": {
+      "result": "retained",
+      "rmsMeters": 4.67,
+      "sourceYear": 2025
+    },
+    "spa": {
+      "result": "retained",
+      "rmsMeters": 4.72,
+      "sourceYear": 2025
+    },
+    "hungaroring": {
+      "result": "calibrated",
+      "rmsMeters": 2.94,
+      "sourceYear": 2025
+    },
+    "zandvoort": {
+      "result": "retained",
+      "rmsMeters": 3.03,
+      "sourceYear": 2025
+    },
+    "monza": {
+      "result": "retained",
+      "rmsMeters": 19.63,
+      "sourceYear": 2025
+    },
+    "baku": {
+      "result": "retained",
+      "rmsMeters": 6.38,
+      "sourceYear": 2025
+    },
+    "singapore": {
+      "result": "retained",
+      "rmsMeters": 5.81,
+      "sourceYear": 2025
+    },
+    "austin": {
+      "result": "retained",
+      "rmsMeters": 3.95,
+      "sourceYear": 2025
+    },
+    "mexico": {
+      "result": "retained",
+      "rmsMeters": 21.71,
+      "sourceYear": 2025
+    },
+    "interlagos": {
+      "result": "retained",
+      "rmsMeters": 3.09,
+      "sourceYear": 2025
+    },
+    "lasvegas": {
+      "result": "retained",
+      "rmsMeters": 3.41,
+      "sourceYear": 2025
+    },
+    "losail": {
+      "result": "retained",
+      "rmsMeters": 4.08,
+      "sourceYear": 2025
+    },
+    "abudhabi": {
+      "result": "retained",
+      "rmsMeters": 3.32,
+      "sourceYear": 2025
+    }
+  }
+}

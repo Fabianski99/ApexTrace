@@ -1,27 +1,22 @@
 @echo off
+setlocal
 cd /d "%~dp0.."
 echo ======================================================
-echo APEXTRACE v0.8.6 - Referencias de curvas F1 2025
- echo ======================================================
-if exist "public\data\f1-circuits.geojson" (
- echo [OK] Atlas de circuitos ya instalado. No es necesario descargarlo otra vez.
-) else (
- echo [INFO] Falta el atlas: instalando mapas base y anotaciones...
- where py >nul 2>nul
- if %ERRORLEVEL% EQU 0 (
-   py -3 tools\descargar_circuitos.py
- ) else (
-   python tools\descargar_circuitos.py
- )
-)
+echo   APEXTRACE v0.8.8 - Calibracion mejorada de curvas F1 25
+echo ======================================================
+echo No es necesario abrir F1 25 ni ApexTrace Recorder.
+echo Descarga y calibra las referencias publicas de los 24 circuitos.
 echo.
-echo [INFO] Obteniendo posiciones automaticas de curvas de F1 2025...
+echo.
+echo [INFO] Descargando y calibrando curvas de los 24 circuitos...
 where py >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
-  py -3 tools\descargar_curvas_f125.py
+ py -3 tools\calibrar_curvas.py
 ) else (
-  python tools\descargar_curvas_f125.py
+ python tools\calibrar_curvas.py
 )
 echo.
-echo [FIN] Actualiza tu navegador despues de terminar.
+echo [FIN] Archivos generados en public\data\corners-calibrated\
+echo Revisa el archivo _status.json para ver los circuitos pendientes.
+echo Los calculos son solo durante esta instalacion; no quedan procesos activos.
 pause

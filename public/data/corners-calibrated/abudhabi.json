@@ -1,0 +1,177 @@
+{
+  "schema": "apextrace-corners-calibrated-v2",
+  "year": 2025,
+  "track": "abudhabi",
+  "source": "MultiViewer 2025 / OpenF1 (aproximado; recorrido GP 2025 validado)",
+  "circuitKey": 70,
+  "count": 16,
+  "status": "ready",
+  "calibration": {
+    "rmsMeters": 3.32,
+    "relativeError": 0.00174,
+    "algorithm": "ordered-projection-v2",
+    "sourceYear": 2025
+  },
+  "turns": [
+    {
+      "number": 1,
+      "mapPosition": {
+        "x": 370.156,
+        "y": 219.843
+      },
+      "trackFraction": 0.051253,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 2,
+      "mapPosition": {
+        "x": 359.834,
+        "y": 173.331
+      },
+      "trackFraction": 0.097564,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 3,
+      "mapPosition": {
+        "x": 325.398,
+        "y": 150.985
+      },
+      "trackFraction": 0.137971,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 4,
+      "mapPosition": {
+        "x": 329.874,
+        "y": 112.619
+      },
+      "trackFraction": 0.17547,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 5,
+      "mapPosition": {
+        "x": 317.604,
+        "y": 38.355
+      },
+      "trackFraction": 0.249248,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 6,
+      "mapPosition": {
+        "x": 240.653,
+        "y": 261.606
+      },
+      "trackFraction": 0.478231,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 7,
+      "mapPosition": {
+        "x": 251.768,
+        "y": 263.156
+      },
+      "trackFraction": 0.490349,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 8,
+      "mapPosition": {
+        "x": 267.207,
+        "y": 299.876
+      },
+      "trackFraction": 0.529222,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 9,
+      "mapPosition": {
+        "x": 399.278,
+        "y": 371.007
+      },
+      "trackFraction": 0.683594,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 10,
+      "mapPosition": {
+        "x": 347.112,
+        "y": 345.78
+      },
+      "trackFraction": 0.748615,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 11,
+      "mapPosition": {
+        "x": 320.682,
+        "y": 329.425
+      },
+      "trackFraction": 0.778752,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 12,
+      "mapPosition": {
+        "x": 316.861,
+        "y": 304.591
+      },
+      "trackFraction": 0.803839,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 13,
+      "mapPosition": {
+        "x": 337.279,
+        "y": 298.537
+      },
+      "trackFraction": 0.824949,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 14,
+      "mapPosition": {
+        "x": 334.447,
+        "y": 275.631
+      },
+      "trackFraction": 0.849196,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 15,
+      "mapPosition": {
+        "x": 282.013,
+        "y": 279.032
+      },
+      "trackFraction": 0.899636,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 16,
+      "mapPosition": {
+        "x": 261.278,
+        "y": 240.096
+      },
+      "trackFraction": 0.944116,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    }
+  ]
+}

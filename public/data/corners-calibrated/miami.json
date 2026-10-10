@@ -1,0 +1,207 @@
+{
+  "schema": "apextrace-corners-calibrated-v2",
+  "year": 2025,
+  "track": "miami",
+  "source": "MultiViewer 2025 / OpenF1 (aproximado; recorrido GP 2025 validado)",
+  "circuitKey": 151,
+  "count": 19,
+  "status": "ready",
+  "calibration": {
+    "rmsMeters": 9.13,
+    "relativeError": 0.00565,
+    "algorithm": "ordered-projection-v2",
+    "sourceYear": 2025
+  },
+  "turns": [
+    {
+      "number": 1,
+      "mapPosition": {
+        "x": 392.631,
+        "y": 212.353
+      },
+      "trackFraction": 0.047257,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 2,
+      "mapPosition": {
+        "x": 368.404,
+        "y": 241.704
+      },
+      "trackFraction": 0.067383,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 3,
+      "mapPosition": {
+        "x": 364.999,
+        "y": 273.62
+      },
+      "trackFraction": 0.083948,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 4,
+      "mapPosition": {
+        "x": 186.631,
+        "y": 236.143
+      },
+      "trackFraction": 0.185349,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 5,
+      "mapPosition": {
+        "x": 142.11,
+        "y": 254.096
+      },
+      "trackFraction": 0.210237,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 6,
+      "mapPosition": {
+        "x": 96.398,
+        "y": 230.231
+      },
+      "trackFraction": 0.237295,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 7,
+      "mapPosition": {
+        "x": 53.299,
+        "y": 242.75
+      },
+      "trackFraction": 0.261093,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 8,
+      "mapPosition": {
+        "x": 62.448,
+        "y": 281.939
+      },
+      "trackFraction": 0.28781,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 9,
+      "mapPosition": {
+        "x": 248.966,
+        "y": 291.384
+      },
+      "trackFraction": 0.382721,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 10,
+      "mapPosition": {
+        "x": 345.731,
+        "y": 318.135
+      },
+      "trackFraction": 0.43352,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 11,
+      "mapPosition": {
+        "x": 557.039,
+        "y": 240.051
+      },
+      "trackFraction": 0.548276,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 12,
+      "mapPosition": {
+        "x": 540.644,
+        "y": 208.488
+      },
+      "trackFraction": 0.570964,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 13,
+      "mapPosition": {
+        "x": 575.754,
+        "y": 185.621
+      },
+      "trackFraction": 0.597656,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 14,
+      "mapPosition": {
+        "x": 591.416,
+        "y": 168.89
+      },
+      "trackFraction": 0.609585,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 15,
+      "mapPosition": {
+        "x": 592.579,
+        "y": 166.813
+      },
+      "trackFraction": 0.610784,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 16,
+      "mapPosition": {
+        "x": 591.323,
+        "y": 132.546
+      },
+      "trackFraction": 0.631224,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 17,
+      "mapPosition": {
+        "x": 120.942,
+        "y": 99.724
+      },
+      "trackFraction": 0.875279,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 18,
+      "mapPosition": {
+        "x": 157.015,
+        "y": 133.976
+      },
+      "trackFraction": 0.911615,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 19,
+      "mapPosition": {
+        "x": 230.291,
+        "y": 114.842
+      },
+      "trackFraction": 0.950401,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    }
+  ]
+}

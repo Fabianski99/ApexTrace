@@ -1,0 +1,187 @@
+{
+  "schema": "apextrace-corners-calibrated-v2",
+  "year": 2025,
+  "track": "lasvegas",
+  "source": "MultiViewer 2025 / OpenF1 (aproximado; recorrido GP 2025 validado)",
+  "circuitKey": 152,
+  "count": 17,
+  "status": "ready",
+  "calibration": {
+    "rmsMeters": 3.41,
+    "relativeError": 0.00149,
+    "algorithm": "ordered-projection-v2",
+    "sourceYear": 2025
+  },
+  "turns": [
+    {
+      "number": 1,
+      "mapPosition": {
+        "x": 418.639,
+        "y": 324.111
+      },
+      "trackFraction": 0.020605,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 2,
+      "mapPosition": {
+        "x": 404.436,
+        "y": 317.447
+      },
+      "trackFraction": 0.037474,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 3,
+      "mapPosition": {
+        "x": 375.728,
+        "y": 330.165
+      },
+      "trackFraction": 0.068066,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 4,
+      "mapPosition": {
+        "x": 361.963,
+        "y": 314.97
+      },
+      "trackFraction": 0.087897,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 5,
+      "mapPosition": {
+        "x": 360.299,
+        "y": 165.876
+      },
+      "trackFraction": 0.225039,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 6,
+      "mapPosition": {
+        "x": 406.026,
+        "y": 160.417
+      },
+      "trackFraction": 0.270592,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 7,
+      "mapPosition": {
+        "x": 420.75,
+        "y": 129.496
+      },
+      "trackFraction": 0.306325,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 8,
+      "mapPosition": {
+        "x": 413.407,
+        "y": 124.162
+      },
+      "trackFraction": 0.315664,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 9,
+      "mapPosition": {
+        "x": 418.461,
+        "y": 103.016
+      },
+      "trackFraction": 0.337386,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 10,
+      "mapPosition": {
+        "x": 334.818,
+        "y": 91.976
+      },
+      "trackFraction": 0.416514,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 11,
+      "mapPosition": {
+        "x": 312.219,
+        "y": 51.782
+      },
+      "trackFraction": 0.459433,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 12,
+      "mapPosition": {
+        "x": 275.802,
+        "y": 38.944
+      },
+      "trackFraction": 0.496745,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 13,
+      "mapPosition": {
+        "x": 223.934,
+        "y": 160.354
+      },
+      "trackFraction": 0.61895,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 14,
+      "mapPosition": {
+        "x": 217.427,
+        "y": 365.454
+      },
+      "trackFraction": 0.807745,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 15,
+      "mapPosition": {
+        "x": 225.177,
+        "y": 370.543
+      },
+      "trackFraction": 0.817856,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 16,
+      "mapPosition": {
+        "x": 233.293,
+        "y": 376.99
+      },
+      "trackFraction": 0.827497,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    },
+    {
+      "number": 17,
+      "mapPosition": {
+        "x": 364.698,
+        "y": 377.015
+      },
+      "trackFraction": 0.948914,
+      "origin": "multiviewer-calibrated",
+      "approximate": true
+    }
+  ]
+}
